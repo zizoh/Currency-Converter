@@ -62,6 +62,7 @@ object Dependencies {
             const val appCompat: String = "1.3.0-alpha02"
             const val constraintLayout: String = "2.0.1"
             const val fragment: String = "1.3.0-alpha08"
+            const val circleImageView = "2.2.0"
         }
 
         const val appCompat: String = "androidx.appcompat:appcompat:${Version.appCompat}"
@@ -71,7 +72,9 @@ object Dependencies {
         const val shimmerLayout: String = "com.facebook.shimmer:shimmer:${Version.shimmerLayout}"
         const val constraintLayout: String =
             "androidx.constraintlayout:constraintlayout:${Version.constraintLayout}"
-        override val components: List<String> = listOf(appCompat, fragment)
+        const val circleImageView: String =
+            "de.hdodenhof:circleimageview:${Version.circleImageView}"
+        override val components: List<String> = listOf(appCompat, fragment, circleImageView)
     }
 
     object FlowBinding {
