@@ -3,9 +3,13 @@ package com.zizohanto.android.currencyconverter.converter.presentation.views
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
+import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConverterBinding
+import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewIntent
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewState
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
@@ -41,12 +45,53 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 Toast.makeText(context, "Getting symbols", Toast.LENGTH_SHORT).show()
             }
             is ConverterViewState.SymbolsLoaded -> {
-                val baseCurrency = state.state.symbols.random()
-                binding.btnBaseCurrency.setCurrencySymbol(baseCurrency)
-                binding.tvBaseCurrency.text = baseCurrency
-                val targetCurrency = state.state.symbols.random()
-                binding.btnTargetCurrency.setCurrencySymbol(targetCurrency)
-                binding.tvTargetCurrency.text = targetCurrency
+                val symbolItems: List<SymbolItem> = getSymbolItems(state.state.symbols)
+                val adapter = SymbolAdapter(context, R.layout.currency_button_layout, symbolItems)
+                binding.spinnerBaseCurrency.adapter = adapter
+                binding.spinnerTargetCurrency.adapter = adapter
+
+                val baseSpinnerItemSelectListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val symbolItem: SymbolItem =
+                            parent?.getItemAtPosition(position) as SymbolItem
+                        binding.tvBaseCurrency.text = symbolItem.symbol
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
+                }
+                binding.spinnerBaseCurrency.onItemSelectedListener = baseSpinnerItemSelectListener
+
+                val targetSpinnerItemSelectListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        val symbolItem: SymbolItem =
+                            parent?.getItemAtPosition(position) as SymbolItem
+                        binding.tvTargetCurrency.text = symbolItem.symbol
+                    }
+
+                    override fun onNothingSelected(parent: AdapterView<*>?) {
+                    }
+                }
+                binding.spinnerTargetCurrency.onItemSelectedListener =
+                    targetSpinnerItemSelectListener
+
+                binding.swap.setOnClickListener {
+                    val baseSelectedItem: Int = binding.spinnerBaseCurrency.selectedItemPosition
+                    val targetSelectedItem: Int = binding.spinnerTargetCurrency.selectedItemPosition
+
+                    binding.spinnerBaseCurrency.setSelection(targetSelectedItem)
+                    binding.spinnerTargetCurrency.setSelection(baseSelectedItem)
+                }
             }
             is ConverterViewState.GettingRates -> {
                 Toast.makeText(context, "Getting rates", Toast.LENGTH_SHORT).show()
@@ -58,6 +103,25 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun getSymbolItems(symbols: List<String>): List<SymbolItem> {
+        val symbolItems = mutableListOf<SymbolItem>()
+        symbols.sorted().forEach {
+            val drawableResId = getFlagDrawableResourceId(it)
+            symbolItems.add(SymbolItem(drawableResId, it))
+        }
+        return symbolItems
+    }
+
+    private fun getFlagDrawableResourceId(it: String): Int {
+        var drawableResId =
+            resources.getIdentifier("flag_${it.toLowerCase()}", "drawable", context.packageName)
+        if (drawableResId == 0) {
+            drawableResId =
+                resources.getIdentifier("flag_placeholder", "drawable", context.packageName)
+        }
+        return drawableResId
     }
 
     private val getRateIntent: Flow<ConverterViewIntent>

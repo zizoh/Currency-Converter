@@ -27,7 +27,7 @@ class SymbolRemoteModelMapper @Inject constructor() :
         for (i in pairs.indices) {
             val pair = pairs[i]
             val keyValue = pair.split("=").toTypedArray()
-            map[keyValue[0]] = keyValue[1]
+            map[keyValue[0].trim()] = keyValue[1].trim()
         }
         return map.keys.toList()
     }
