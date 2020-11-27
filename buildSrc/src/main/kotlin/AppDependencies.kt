@@ -77,6 +77,14 @@ object Dependencies {
         override val components: List<String> = listOf(appCompat, fragment, circleImageView)
     }
 
+    object Others {
+        object Version {
+            const val jodaTime: String = "2.9.9.4"
+        }
+
+        const val jodaTime: String = "net.danlew:android.joda:${Version.jodaTime}"
+    }
+
     object FlowBinding {
         private const val flowBinding: String = "1.0.0-alpha04"
         const val android: String =
@@ -117,6 +125,31 @@ object Dependencies {
         override val components: List<String> = listOf(core, android)
     }
 
+    object Network : Libraries {
+        object Version {
+            const val okhttp: String = "4.7.2"
+            const val retrofit: String = "2.9.0"
+            const val moshi: String = "1.9.2"
+        }
+
+        object AnnotationProcessor {
+            const val moshi: String = "com.squareup.moshi:moshi-kotlin-codegen:${Version.moshi}"
+        }
+
+        private const val okhttp: String = "com.squareup.okhttp3:okhttp:${Version.okhttp}"
+        private const val loggingInterceptor: String =
+            "com.squareup.okhttp3:logging-interceptor:${Version.okhttp}"
+        private const val retrofit: String = "com.squareup.retrofit2:retrofit:${Version.retrofit}"
+        private const val retrofitMoshi: String =
+            "com.squareup.retrofit2:converter-moshi:${Version.retrofit}"
+        const val moshi: String = "com.squareup.moshi:moshi-kotlin:${Version.moshi}"
+
+        override val components: List<String> = listOf(
+            okhttp, loggingInterceptor, retrofit,
+            retrofitMoshi, moshi
+        )
+    }
+
     object Cache {
         object Version {
             const val room: String = "2.3.0-alpha02"
@@ -140,6 +173,7 @@ object Dependencies {
             const val truth: String = "1.0.1"
             const val robolectric: String = "4.4"
             const val archCoreTest: String = "1.1.1"
+            const val mockWebServer: String = "4.7.2"
         }
 
         const val junit: String = "junit:junit:${Version.junit}"
@@ -156,6 +190,8 @@ object Dependencies {
         const val coroutinesTest: String =
             "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Coroutines.Version.coroutines}"
         const val robolectric: String = "org.robolectric:robolectric:${Version.robolectric}"
+        const val mockWebServer: String =
+            "com.squareup.okhttp3:mockwebserver:${Version.mockWebServer}"
     }
 }
 
@@ -168,4 +204,5 @@ object ProjectLib {
     const val cache: String = ":libraries:cache"
     const val testUtils: String = ":libraries:testUtils"
     const val converter: String = ":converter"
+    const val remote: String = ":libraries:remote"
 }

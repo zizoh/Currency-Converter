@@ -1,5 +1,7 @@
 import Dependencies.AndroidX
 import Dependencies.DI
+import Dependencies.Others
+import Dependencies.Network
 import Dependencies.View
 import ProjectLib.cache
 import ProjectLib.core
@@ -7,6 +9,7 @@ import ProjectLib.data
 import ProjectLib.domain
 import ProjectLib.presentation
 import ProjectLib.converter
+import ProjectLib.remote
 
 plugins {
     androidApplication
@@ -68,10 +71,13 @@ dependencies {
     implementation(project(domain))
     implementation(project(data))
     implementation(project(core))
+    implementation(project(remote))
 
     implementAll(View.components)
     implementation(DI.hiltAndroid)
     implementation(DI.hiltViewModel)
+    implementation(Others.jodaTime)
+    implementation(Network.moshi)
 
     AndroidX.run {
         implementation(activity)
