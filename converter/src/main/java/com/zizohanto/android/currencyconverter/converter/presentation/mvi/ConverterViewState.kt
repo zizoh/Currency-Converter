@@ -11,12 +11,11 @@ sealed class ConverterViewState : ViewState {
     object Idle : ConverterViewState()
     object GettingSymbols : ConverterViewState()
     data class SymbolsLoaded(val state: ConverterDataModel) : ConverterViewState()
-    data class GettingRates(val state: ConverterDataModel) : ConverterViewState()
-    data class Converted(val state: ConverterDataModel) : ConverterViewState()
+    object GettingConversion : ConverterViewState()
+    data class Converted(val rate: Double) : ConverterViewState()
     data class Error(
         val message: String,
-        val isErrorGettingSymbols: Boolean,
-        val state: ConverterDataModel
+        val isErrorGettingSymbols: Boolean
     ) : ConverterViewState()
 
 }

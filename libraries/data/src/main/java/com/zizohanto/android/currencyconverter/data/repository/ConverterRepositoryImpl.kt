@@ -27,10 +27,9 @@ class ConverterRepositoryImpl @Inject constructor(
         return flow {
             val historicalData: HistoricalDataEntity =
                 converterRemote.getHistoricalData(date, listOf(base, target))
-            val value: List<Double> = historicalData.rates.values.toList()
-            val oneEuroToBaseRate: Double = value[0]
-            val oneEuroToTargetRate: Double = value[1]
-            val convertedRate = oneEuroToBaseRate * amount * oneEuroToTargetRate
+            val oneEuroToTargetRate = historicalData.oneEuroToTargetRate
+            val oneEuroToBaseRate = historicalData.oneEuroToBaseRate
+            val convertedRate = amount * (oneEuroToTargetRate / oneEuroToBaseRate)
             emit(convertedRate)
         }
     }

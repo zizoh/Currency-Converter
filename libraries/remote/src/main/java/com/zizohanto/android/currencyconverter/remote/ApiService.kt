@@ -17,10 +17,10 @@ interface ApiService {
         @Query("access_key") apiKey: String = ""
     ): SymbolRemoteModel
 
-    @GET("symbols/{date}")
+    @GET("/{date}")
     suspend fun getHistoricalData(
         @Path("date") date: String,
         @Query("access_key") apiKey: String = "",
-        @Query("symbols") symbols: List<String>
+        @Query("symbols") symbols: String
     ): HistoricalDataRemoteModel
 }

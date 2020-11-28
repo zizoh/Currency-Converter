@@ -14,6 +14,10 @@ object HttpsInterceptor : Interceptor {
         val request: Request = chain.request()
         val requestBuilder: Request.Builder = request.newBuilder()
 
+        var stringUrl = request.url.toString()
+        stringUrl = stringUrl.replace("%2C", ",")
+        requestBuilder.url(stringUrl)
+
         val newRequest: Request = requestBuilder.build()
         val response: Response?
 

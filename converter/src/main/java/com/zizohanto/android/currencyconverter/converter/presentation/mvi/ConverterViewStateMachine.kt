@@ -12,6 +12,6 @@ class ConverterViewStateMachine  @Inject constructor(
 ) : ConverterStateMachine(
     intentProcessor,
     reducer,
-    ConverterViewIntent.Idle,
+    ConverterViewIntent.LoadSymbols,
     ConverterViewState.Idle
 )

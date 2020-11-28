@@ -13,9 +13,8 @@ import com.zizohanto.android.currencyconverter.core.ext.observe
 import com.zizohanto.android.currencyconverter.core.view_binding.viewBinding
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.merge
 
 @AndroidEntryPoint
 class ConverterFragment : Fragment(R.layout.fragment_converter),
@@ -25,21 +24,13 @@ class ConverterFragment : Fragment(R.layout.fragment_converter),
 
     private val binding: FragmentConverterBinding by viewBinding(FragmentConverterBinding::bind)
 
-    private val loadSymbols = ConflatedBroadcastChannel<ConverterViewIntent.LoadSymbols>()
-
     override val intents: Flow<ConverterViewIntent>
-        get() = loadSymbols.asFlow()
+        get() = merge(binding.converter.intents)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.processIntent(intents)
         viewModel.viewState.observe(viewLifecycleOwner, ::render)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        loadSymbols.offer(ConverterViewIntent.LoadSymbols)
     }
 
     override fun render(state: ConverterViewState) {

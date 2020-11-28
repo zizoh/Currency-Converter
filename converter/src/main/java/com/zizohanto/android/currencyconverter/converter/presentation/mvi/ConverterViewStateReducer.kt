@@ -15,26 +15,24 @@ class ConverterViewStateReducer @Inject constructor() : ConverterStateReducer {
         result: ConverterViewResult
     ): ConverterViewState {
         return when (result) {
-            ConverterViewResult.Idle -> ConverterViewState.Idle
+            ConverterViewResult.Idle -> {
+                ConverterViewState.Idle
+            }
             is ConverterViewResult.SymbolsLoaded -> {
                 val symbols: List<String> = result.symbols
                 ConverterViewState.SymbolsLoaded(ConverterDataModel().copy(symbols = symbols))
             }
             is ConverterViewResult.Converted -> {
                 when (previous) {
-                    is ConverterViewState.GettingRates -> {
-                        val state = previous.state.copy(
-                            convertedRate = result.convertedRate,
-                        )
-                        ConverterViewState.Converted(state)
+                    is ConverterViewState.GettingConversion -> {
+                        ConverterViewState.Converted(result.convertedRate)
                     }
                     is ConverterViewState.Error -> {
-                        val state = previous.state.copy(
-                            convertedRate = result.convertedRate
-                        )
-                        ConverterViewState.Converted(state)
+                        ConverterViewState.Converted(result.convertedRate)
                     }
-                    else -> ConverterViewState.Idle
+                    else -> {
+                        ConverterViewState.Idle
+                    }
                 }
             }
             is ConverterViewResult.Error -> {
@@ -42,20 +40,28 @@ class ConverterViewStateReducer @Inject constructor() : ConverterStateReducer {
                     ConverterViewState.GettingSymbols -> {
                         ConverterViewState.Error(
                             result.throwable.errorMessage,
-                            result.isErrorGettingSymbols,
-                            ConverterDataModel(),
+                            result.isErrorGettingSymbols
                         )
                     }
-                    is ConverterViewState.GettingRates -> {
+                    is ConverterViewState.SymbolsLoaded -> {
                         ConverterViewState.Error(
                             result.throwable.errorMessage,
-                            result.isErrorGettingSymbols,
-                            previous.state
+                            result.isErrorGettingSymbols
                         )
                     }
-                    else -> ConverterViewState.Idle
+                    is ConverterViewState.GettingConversion -> {
+                        ConverterViewState.Error(
+                            result.throwable.errorMessage,
+                            result.isErrorGettingSymbols
+                        )
+                    }
+                    else -> {
+                        ConverterViewState.Idle
+                    }
                 }
             }
+            ConverterViewResult.GettingSymbols -> ConverterViewState.GettingSymbols
+            ConverterViewResult.GettingRates -> ConverterViewState.GettingConversion
         }
     }
 }

@@ -8,5 +8,6 @@ data class HistoricalDataEntity(
     val timestamp: Long,
     val base: String,
     val date: String,
-    val rates: HashMap<String, Double>
+    val oneEuroToBaseRate: Double,
+    val oneEuroToTargetRate: Double
 )

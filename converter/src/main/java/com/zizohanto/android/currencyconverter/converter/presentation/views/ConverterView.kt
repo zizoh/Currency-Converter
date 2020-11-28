@@ -1,12 +1,16 @@
 package com.zizohanto.android.currencyconverter.converter.presentation.views
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConverterBinding
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
@@ -50,40 +54,51 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 binding.spinnerBaseCurrency.adapter = adapter
                 binding.spinnerTargetCurrency.adapter = adapter
 
-                val baseSpinnerItemSelectListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val symbolItem: SymbolItem =
-                            parent?.getItemAtPosition(position) as SymbolItem
-                        binding.tvBaseCurrency.text = symbolItem.symbol
+                binding.spinnerBaseCurrency.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val symbolItem: SymbolItem =
+                                parent?.getItemAtPosition(position) as SymbolItem
+                            binding.tvBaseCurrency.text = symbolItem.symbol
+
+                            val isValidAmount = !binding.amount.text.isNullOrEmpty()
+                            val areDifferentCurrencies =
+                                binding.tvTargetCurrency.text.toString() != symbolItem.symbol
+                            enableConvertButton(isValidAmount && areDifferentCurrencies)
+                            clearConvertedValue()
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
                     }
 
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
-                }
-                binding.spinnerBaseCurrency.onItemSelectedListener = baseSpinnerItemSelectListener
-
-                val targetSpinnerItemSelectListener = object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val symbolItem: SymbolItem =
-                            parent?.getItemAtPosition(position) as SymbolItem
-                        binding.tvTargetCurrency.text = symbolItem.symbol
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                    }
-                }
                 binding.spinnerTargetCurrency.onItemSelectedListener =
-                    targetSpinnerItemSelectListener
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            val symbolItem: SymbolItem =
+                                parent?.getItemAtPosition(position) as SymbolItem
+                            binding.tvTargetCurrency.text = symbolItem.symbol
+
+                            val isValidAmount = !binding.amount.text.isNullOrEmpty()
+                            val areDifferentCurrencies =
+                                binding.tvBaseCurrency.text.toString() != symbolItem.symbol
+                            enableConvertButton(isValidAmount && areDifferentCurrencies)
+                            clearConvertedValue()
+                        }
+
+                        override fun onNothingSelected(parent: AdapterView<*>?) {
+                        }
+                    }
 
                 binding.swap.setOnClickListener {
                     val baseSelectedItem: Int = binding.spinnerBaseCurrency.selectedItemPosition
@@ -91,18 +106,65 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
 
                     binding.spinnerBaseCurrency.setSelection(targetSelectedItem)
                     binding.spinnerTargetCurrency.setSelection(baseSelectedItem)
+                    clearConvertedValue()
+                }
+
+                binding.amount.doOnTextChanged { text: CharSequence?, _, _, _ ->
+                    val enableButton = enableConvertButton(
+                        text,
+                        binding.tvBaseCurrency.text.toString(),
+                        binding.tvTargetCurrency.text.toString()
+                    )
+                    enableConvertButton(enableButton)
+                    clearConvertedValue()
                 }
             }
-            is ConverterViewState.GettingRates -> {
-                Toast.makeText(context, "Getting rates", Toast.LENGTH_SHORT).show()
+            is ConverterViewState.GettingConversion -> {
+                enableConvertButton(false)
+                showConversionProgress(true)
             }
             is ConverterViewState.Converted -> {
-                binding.converted.text = state.state.convertedRate.toString()
+                enableConvertButton(true)
+                showConversionProgress(false)
+                binding.converted.text = state.rate.toString()
             }
             is ConverterViewState.Error -> {
+                if (!state.isErrorGettingSymbols) {
+                    enableConvertButton(false)
+                    showConversionProgress(false)
+                }
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun enableConvertButton(
+        text: CharSequence?,
+        baseSymbol: String,
+        targetSymbol: String
+    ): Boolean {
+        val isValidAmount = !text.isNullOrEmpty()
+        val areDifferentCurrencies = baseSymbol != targetSymbol
+        return isValidAmount && areDifferentCurrencies
+    }
+
+    private fun showConversionProgress(showProgress: Boolean) {
+        if (showProgress) {
+            binding.btnConvert.showProgress {
+                buttonTextRes = R.string.converting
+                progressColor = Color.WHITE
+            }
+        } else {
+            binding.btnConvert.hideProgress(R.string.convert)
+        }
+    }
+
+    private fun enableConvertButton(enable: Boolean) {
+        binding.btnConvert.isEnabled = enable
+    }
+
+    private fun clearConvertedValue() {
+        binding.converted.text = ""
     }
 
     private fun getSymbolItems(symbols: List<String>): List<SymbolItem> {
@@ -125,13 +187,14 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     }
 
     private val getRateIntent: Flow<ConverterViewIntent>
-        get() = binding.btnConvert.clicks().map {
-            ConverterViewIntent.GetRates(
-                binding.amount.text.toString().toDouble(),
-                binding.tvBaseCurrency.text.toString(),
-                binding.tvTargetCurrency.text.toString()
-            )
-        }
+        get() = binding.btnConvert.clicks()
+            .map {
+                ConverterViewIntent.GetRates(
+                    binding.amount.text.toString().toDouble(),
+                    binding.tvBaseCurrency.text.toString(),
+                    binding.tvTargetCurrency.text.toString()
+                )
+            }
 
     override val intents: Flow<ConverterViewIntent>
         get() = getRateIntent

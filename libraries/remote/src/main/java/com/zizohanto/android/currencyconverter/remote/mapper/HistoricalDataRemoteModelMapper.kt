@@ -9,10 +9,26 @@ import javax.inject.Inject
  * Created by zizoh on 25/November/2020.
  */
 
-class HistoricalDataRemoteModelMapper @Inject constructor():
+class HistoricalDataRemoteModelMapper @Inject constructor() :
     RemoteModelMapper<HistoricalDataRemoteModel, HistoricalDataEntity> {
 
     override fun mapFromModel(model: HistoricalDataRemoteModel): HistoricalDataEntity {
-        return HistoricalDataEntity(model.timestamp, model.base, model.date, model.rates)
+        val rates = getRates(model.rates.toString())
+        return HistoricalDataEntity(model.timestamp, model.base, model.date, rates[0], rates[1])
+    }
+
+    private fun getRates(symbols: String): List<Double> {
+        if (symbols.isEmpty()) {
+            return emptyList()
+        }
+        val removedBraces = symbols.substring(1, symbols.lastIndex)
+        val rates: MutableList<Double> = mutableListOf()
+        val pairs: Array<String> = removedBraces.split(",").toTypedArray()
+        for (i in pairs.indices) {
+            val pair = pairs[i]
+            val keyValue = pair.split("=").toTypedArray()
+            rates.add(keyValue[1].trim().toDouble())
+        }
+        return rates
     }
 }

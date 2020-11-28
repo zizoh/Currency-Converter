@@ -63,6 +63,7 @@ object Dependencies {
             const val constraintLayout: String = "2.0.1"
             const val fragment: String = "1.3.0-alpha08"
             const val circleImageView = "2.2.0"
+            const val progressButton = "2.1.0"
         }
 
         const val appCompat: String = "androidx.appcompat:appcompat:${Version.appCompat}"
@@ -74,7 +75,10 @@ object Dependencies {
             "androidx.constraintlayout:constraintlayout:${Version.constraintLayout}"
         const val circleImageView: String =
             "de.hdodenhof:circleimageview:${Version.circleImageView}"
-        override val components: List<String> = listOf(appCompat, fragment, circleImageView)
+        const val progressButton: String =
+            "com.github.razir.progressbutton:progressbutton:${Version.progressButton}"
+        override val components: List<String> =
+            listOf(appCompat, fragment, circleImageView, progressButton)
     }
 
     object Others {

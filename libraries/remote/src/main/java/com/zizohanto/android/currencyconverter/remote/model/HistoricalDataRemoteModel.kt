@@ -8,5 +8,5 @@ data class HistoricalDataRemoteModel(
     val timestamp: Long,
     val base: String,
     val date: String,
-    val rates: HashMap<String, Double>
+    val rates: Any
 )
