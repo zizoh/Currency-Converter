@@ -10,5 +10,5 @@ interface ConverterRemote {
 
     suspend fun getSymbols(): List<String>
 
-    suspend fun getHistoricalData(date: String, symbols: List<String>): HistoricalDataEntity
+    suspend fun getHistoricalData(date: String, base: String, target: String): HistoricalDataEntity
 }

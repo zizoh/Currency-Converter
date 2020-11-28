@@ -126,7 +126,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
             is ConverterViewState.Converted -> {
                 enableConvertButton(true)
                 showConversionProgress(false)
-                binding.converted.text = state.rate.toString()
+                binding.converted.text = state.historicalData.convertedRate.toString()
             }
             is ConverterViewState.Error -> {
                 if (!state.isErrorGettingSymbols) {

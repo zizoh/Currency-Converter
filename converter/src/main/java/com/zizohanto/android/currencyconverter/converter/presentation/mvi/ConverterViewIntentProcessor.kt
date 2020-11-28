@@ -1,5 +1,6 @@
 package com.zizohanto.android.currencyconverter.converter.presentation.mvi
 
+import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import com.zizohanto.android.currencyconverter.domain.usecase.GetConversion
 import com.zizohanto.android.currencyconverter.domain.usecase.GetSymbols
 import kotlinx.coroutines.flow.*
@@ -39,10 +40,14 @@ class ConverterViewIntentProcessor @Inject constructor(
     }
 
 
-    private fun getConversion(amount: Double, base: String, target: String): Flow<ConverterViewResult> {
+    private fun getConversion(
+        amount: Double,
+        base: String,
+        target: String
+    ): Flow<ConverterViewResult> {
         val params = GetConversion.Params(amount, base, target)
         return getConversion(params)
-            .map<Double, ConverterViewResult> {
+            .map<HistoricalData, ConverterViewResult> {
                 ConverterViewResult.Converted(it)
             }.onStart {
                 emit(ConverterViewResult.GettingRates)

@@ -22,10 +22,11 @@ class ConverterRemoteImpl @Inject constructor(
 
     override suspend fun getHistoricalData(
         date: String,
-        symbols: List<String>
+        base: String,
+        target: String
     ): HistoricalDataEntity {
         val historicalDataEntity: HistoricalDataRemoteModel =
-            apiService.getHistoricalData(date, symbols = symbols.joinToString(","))
+            apiService.getHistoricalData(date, symbols = "$base,$target")
         return historicalDataRemoteModelMapper.mapFromModel(historicalDataEntity)
     }
 }

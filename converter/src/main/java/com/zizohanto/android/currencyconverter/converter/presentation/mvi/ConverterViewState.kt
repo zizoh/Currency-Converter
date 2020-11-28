@@ -1,6 +1,7 @@
 package com.zizohanto.android.currencyconverter.converter.presentation.mvi
 
 import com.zizohanto.android.currencyconverter.converter.presentation.models.ConverterDataModel
+import com.zizohanto.android.currencyconverter.converter.presentation.models.HistoricalDataModel
 import com.zizohanto.android.currencyconverter.presentation.mvi.ViewState
 
 /**
@@ -12,7 +13,7 @@ sealed class ConverterViewState : ViewState {
     object GettingSymbols : ConverterViewState()
     data class SymbolsLoaded(val state: ConverterDataModel) : ConverterViewState()
     object GettingConversion : ConverterViewState()
-    data class Converted(val rate: Double) : ConverterViewState()
+    data class Converted(val historicalData: HistoricalDataModel) : ConverterViewState()
     data class Error(
         val message: String,
         val isErrorGettingSymbols: Boolean

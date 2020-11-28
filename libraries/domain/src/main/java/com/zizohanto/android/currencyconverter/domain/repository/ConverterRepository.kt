@@ -1,5 +1,6 @@
 package com.zizohanto.android.currencyconverter.domain.repository
 
+import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -15,5 +16,5 @@ interface ConverterRepository {
         amount: Double,
         base: String,
         target: String
-    ): Flow<Double>
+    ): Flow<HistoricalData>
 }

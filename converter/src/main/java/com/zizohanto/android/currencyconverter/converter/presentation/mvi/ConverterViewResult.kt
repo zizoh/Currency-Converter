@@ -1,5 +1,6 @@
 package com.zizohanto.android.currencyconverter.converter.presentation.mvi
 
+import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import com.zizohanto.android.currencyconverter.presentation.mvi.ViewResult
 
 /**
@@ -11,7 +12,7 @@ sealed class ConverterViewResult : ViewResult {
     object GettingSymbols : ConverterViewResult()
     data class SymbolsLoaded(val symbols: List<String>) : ConverterViewResult()
     object GettingRates : ConverterViewResult()
-    data class Converted(val convertedRate: Double) : ConverterViewResult()
+    data class Converted(val historicalData: HistoricalData) : ConverterViewResult()
     data class Error(
         val throwable: Throwable,
         val isErrorGettingSymbols: Boolean

@@ -14,14 +14,16 @@ class HistoricalDataRemoteModelMapper @Inject constructor() :
 
     override fun mapFromModel(model: HistoricalDataRemoteModel): HistoricalDataEntity {
         val rates = getRates(model.rates.toString())
-        return HistoricalDataEntity(model.timestamp, model.base, model.date, rates[0], rates[1])
+        val toString = getSymbols(model.rates.toString()).keys.toList()
+        val id = "${toString[0]}${toString[1]}"
+        return HistoricalDataEntity(id, model.timestamp, model.base, model.date, rates[0], rates[1])
     }
 
-    private fun getRates(symbols: String): List<Double> {
-        if (symbols.isEmpty()) {
+    private fun getRates(response: String): List<Double> {
+        if (response.isEmpty()) {
             return emptyList()
         }
-        val removedBraces = symbols.substring(1, symbols.lastIndex)
+        val removedBraces = response.substring(1, response.lastIndex)
         val rates: MutableList<Double> = mutableListOf()
         val pairs: Array<String> = removedBraces.split(",").toTypedArray()
         for (i in pairs.indices) {
@@ -30,5 +32,22 @@ class HistoricalDataRemoteModelMapper @Inject constructor() :
             rates.add(keyValue[1].trim().toDouble())
         }
         return rates
+    }
+
+    private fun getSymbols(response: String): HashMap<String, Double> {
+        if (response.isEmpty()) {
+            return hashMapOf()
+        }
+        val removedBraces = response.substring(1, response.lastIndex)
+        val rates: MutableList<Double> = mutableListOf()
+        val map: HashMap<String, Double> = HashMap()
+        val pairs: Array<String> = removedBraces.split(",").toTypedArray()
+        for (i in pairs.indices) {
+            val pair = pairs[i]
+            val keyValue = pair.split("=").toTypedArray()
+            rates.add(keyValue[0].trim().toDouble())
+            map[keyValue[0].trim()] = keyValue[1].trim().toDouble()
+        }
+        return map
     }
 }

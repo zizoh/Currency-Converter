@@ -5,6 +5,7 @@ package com.zizohanto.android.currencyconverter.data.models
  */
 
 data class HistoricalDataEntity(
+    val id: String,
     val timestamp: Long,
     val base: String,
     val date: String,
