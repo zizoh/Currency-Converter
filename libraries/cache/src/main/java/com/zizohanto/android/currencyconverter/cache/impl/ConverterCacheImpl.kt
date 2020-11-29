@@ -25,4 +25,8 @@ class ConverterCacheImpl @Inject constructor(
         return if (historicalData == null) null
         else mapper.mapToEntity(historicalData)
     }
+
+    override suspend fun saveHistoricalData(historicalData: HistoricalDataEntity) {
+        historicalDataDao.insertHistoricalData(mapper.mapToModel(historicalData))
+    }
 }

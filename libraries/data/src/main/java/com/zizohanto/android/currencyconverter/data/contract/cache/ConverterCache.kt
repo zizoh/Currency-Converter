@@ -14,4 +14,6 @@ interface ConverterCache {
         base: String,
         target: String
     ): HistoricalDataEntity?
+
+    suspend fun saveHistoricalData(historicalData: HistoricalDataEntity)
 }

@@ -34,8 +34,10 @@ class ConverterRepositoryImpl @Inject constructor(
                 val historicalData = getHistoricalData(dataFromCache, amount)
                 emit(historicalData)
             }
+            val id = "${base}${target}"
             val dataFromRemote: HistoricalDataEntity =
-                converterRemote.getHistoricalData(date, base, target)
+                converterRemote.getHistoricalData(date, base, target).copy(id = id)
+            converterCache.saveHistoricalData(dataFromRemote)
             val historicalData = getHistoricalData(dataFromRemote, amount)
             emit(historicalData)
         }

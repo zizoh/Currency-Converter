@@ -1,5 +1,6 @@
 package com.zizohanto.android.currencyconverter.cache.room
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -9,6 +10,7 @@ import com.zizohanto.android.currencyconverter.cache.models.HistoricalDataCacheM
  * Created by zizoh on 28/November/2020.
  */
 
+@Dao
 interface HistoricalDataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
