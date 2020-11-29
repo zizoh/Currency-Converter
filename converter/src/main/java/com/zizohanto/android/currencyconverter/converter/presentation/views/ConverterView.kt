@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConve
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewIntent
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewState
+import com.zizohanto.android.currencyconverter.core.ext.makeLinks
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
@@ -127,6 +129,15 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 enableConvertButton(true)
                 showConversionProgress(false)
                 binding.converted.text = state.historicalData.convertedRate.toString()
+
+                val marketRateText = "Mid-market exchange rate at ${state.historicalData.time}"
+                binding.marketRate.text = marketRateText
+                binding.marketRate.makeLinks(
+                    Pair(marketRateText, OnClickListener {
+                        Toast.makeText(context, "${state.historicalData.time}", Toast.LENGTH_SHORT)
+                            .show()
+                    })
+                )
             }
             is ConverterViewState.Error -> {
                 if (!state.isErrorGettingSymbols) {

@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class HistoricalDataModelMapper @Inject constructor() :
     ModelMapper<HistoricalDataModel, HistoricalData> {
-    
+
     override fun mapToModel(domain: HistoricalData): HistoricalDataModel {
         return HistoricalDataModel(domain.convertedRate, getFormattedTime(domain.timeStamp))
     }
@@ -22,9 +22,13 @@ class HistoricalDataModelMapper @Inject constructor() :
     }
 
     private fun getFormattedTime(timeStamp: Long): String {
-        val dateTime = DateTime(timeStamp)
-        return with(dateTime) {
-            "${hourOfDay}:${minuteOfHour}"
-        }
+        val dateTime = DateTime(timeStamp * 1000L)
+        val time = dateTime.toString("HH:mm")
+        val timeZone: String = getThreeLetterTimeZone(dateTime)
+        return "$time $timeZone"
+    }
+
+    private fun getThreeLetterTimeZone(dateTime: DateTime): String {
+        return "WAT"
     }
 }

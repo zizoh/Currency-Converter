@@ -41,6 +41,7 @@
         android:text="Currency Calculator."
         android:textColor="@color/blue"
         android:textSize="48sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/menu" />
 
@@ -188,6 +189,7 @@
             android:layout_height="wrap_content"
             android:text="@string/mid_market_exchange_rate_at_13_38_utc"
             android:textColor="@color/blue"
+            android:textColorLink="@color/blue"
             android:textSize="20sp" />
 
         <ImageView
