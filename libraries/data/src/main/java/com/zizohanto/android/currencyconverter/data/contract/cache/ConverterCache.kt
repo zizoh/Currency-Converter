@@ -10,6 +10,8 @@ interface ConverterCache {
 
     suspend fun getSymbols(): List<String>
 
+    suspend fun saveSymbols(symbols: List<String>)
+
     suspend fun getHistoricalData(
         base: String,
         target: String

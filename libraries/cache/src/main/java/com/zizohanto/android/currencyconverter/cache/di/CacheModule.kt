@@ -4,6 +4,7 @@ import android.content.Context
 import com.zizohanto.android.currencyconverter.cache.impl.ConverterCacheImpl
 import com.zizohanto.android.currencyconverter.cache.room.CurrencyConverterDatabase
 import com.zizohanto.android.currencyconverter.cache.room.HistoricalDataDao
+import com.zizohanto.android.currencyconverter.cache.room.SymbolDao
 import com.zizohanto.android.currencyconverter.data.contract.cache.ConverterCache
 import dagger.Binds
 import dagger.Module
@@ -33,6 +34,11 @@ interface CacheModule {
         @[Provides Singleton]
         fun provideHistoricalDataDao(database: CurrencyConverterDatabase): HistoricalDataDao {
             return database.historicalDataDao
+        }
+
+        @[Provides Singleton]
+        fun provideSymbolDao(database: CurrencyConverterDatabase): SymbolDao {
+            return database.symbolDao
         }
     }
 }

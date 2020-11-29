@@ -16,8 +16,14 @@ class ConverterRepositoryImpl @Inject constructor(
 
     override fun getSymbols(): Flow<List<String>> {
         return flow {
-            val symbols: List<String> = converterRemote.getSymbols()
-            emit(symbols)
+            val symbolsCache = converterCache.getSymbols()
+            if (symbolsCache.isNotEmpty()) {
+                emit(symbolsCache)
+                return@flow
+            }
+            val symbolsRemote: List<String> = converterRemote.getSymbols()
+            converterCache.saveSymbols(symbolsRemote)
+            emit(symbolsRemote)
         }
     }
 
