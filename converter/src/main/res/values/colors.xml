@@ -13,4 +13,5 @@
     <color name="klein_blue">#0021AF</color>
     <color name="gray">#f2f4f4</color>
     <color name="gray_dark">#b2babb</color>
+    <color name="colorDisabledButton">#82E0C2</color>
 </resources>

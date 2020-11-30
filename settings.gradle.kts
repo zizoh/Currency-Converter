@@ -7,5 +7,6 @@ include(
     ":libraries:cache",
     ":libraries:data",
     ":libraries:testUtils",
-    ":libraries:domain"
+    ":libraries:domain",
+    ":libraries:remote"
 )
