@@ -39,7 +39,7 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
             val bundle = it.getParcelable<ChartFragmentBundle>(CHART_FRAGMENT_BUNDLE)
             if (bundle != null) {
                 showChart(bundle.numberOfEntries)
-                setData(bundle.historicalData, "USD")
+                setData(bundle.historicalData, bundle.baseSymbol)
             }
         }
     }
@@ -61,7 +61,7 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
         chart.setDrawGridBackground(false)
 
         val x: XAxis = chart.xAxis
-        x.textColor = Color.BLACK
+        x.textColor = Color.WHITE
         x.position = XAxis.XAxisPosition.BOTTOM
         x.setDrawLabels(true)
         x.setDrawGridLines(false)

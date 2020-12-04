@@ -10,9 +10,10 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.Fragment
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConverterBinding
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
@@ -38,7 +39,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
 
     private var binding: LayoutConverterBinding
 
-    lateinit var fragmentManager: FragmentManager
+    lateinit var fragment: Fragment
 
     init {
         isSaveEnabled = true
@@ -139,8 +140,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 binding.marketRate.text = marketRateText
                 binding.marketRate.makeLinks(
                     Pair(marketRateText, OnClickListener {
-                        Toast.makeText(context, "${state.historicalData.time}", Toast.LENGTH_SHORT)
-                            .show()
+                        showDummyToast()
                     })
                 )
             }
@@ -158,28 +158,48 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 val adapter = getViewPagerAdapter(state)
                 binding.tabViewpager.offscreenPageLimit = 2
                 binding.tabViewpager.adapter = adapter
-                binding.tabLayout.setupWithViewPager(binding.tabViewpager)
+                TabLayoutMediator(binding.tabLayout, binding.tabViewpager) { tab, position ->
+                    when (position) {
+                        0 -> {
+                            tab.text = "Past ${state.historicalData.size} days"
+                        }
+                        1 -> {
+                            tab.text = "Past 90 days"
+                        }
+                    }
+                }.attach()
+
+                val getRateAlerts = context.getString(R.string.get_rates_alert)
+                binding.tvGetRateAlerts.makeLinks(
+                    Pair(getRateAlerts, OnClickListener {
+                        showDummyToast()
+                    })
+                )
             }
         }
     }
 
+    private fun showDummyToast() {
+        Toast.makeText(
+            context,
+            context.getString(R.string.nothing_to_see_here),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
     private fun getViewPagerAdapter(state: ConverterViewState.ChartDataLoaded): ViewPagerAdapter {
-        val adapter = ViewPagerAdapter(fragmentManager)
-        adapter.addFrag(
+        val tabs = listOf(
             ChartFragment.newInstance(
                 ChartFragment.ChartFragmentBundle(
                     30, "USD", state.historicalData
                 )
-            ), "Past ${state.historicalData.size} days"
-        )
-        adapter.addFrag(
-            ChartFragment.newInstance(
+            ), ChartFragment.newInstance(
                 ChartFragment.ChartFragmentBundle(
                     30, "USD", state.historicalData
                 )
-            ), "Past ${state.historicalData.size} days"
+            )
         )
-        return adapter
+        return ViewPagerAdapter(tabs, fragment)
     }
 
     private fun enableConvertButton(

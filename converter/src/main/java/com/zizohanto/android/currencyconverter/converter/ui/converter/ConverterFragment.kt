@@ -29,7 +29,7 @@ class ConverterFragment : Fragment(R.layout.fragment_converter),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.converter.fragmentManager = childFragmentManager
+        binding.converter.fragment = this
         viewModel.processIntent(intents)
         viewModel.viewState.observe(viewLifecycleOwner, ::render)
     }

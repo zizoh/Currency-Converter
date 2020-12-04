@@ -7,7 +7,7 @@
     android:layout_marginTop="24dp"
     tools:context=".presentation.views.ConverterView">
 
-    <com.zizohanto.android.currencyconverter.converter.presentation.views.CustomScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -228,33 +228,54 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
                 android:backgroundTint="@color/blue"
                 android:orientation="vertical"
+                app:cardCornerRadius="24dp"
                 app:layout_constraintTop_toBottomOf="@id/ll_market_rate">
 
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tab_layout"
-                    style="@style/TabLayoutStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:tabIndicatorColor="@android:color/transparent"
-                    app:tabMode="fixed"
-                    app:tabRippleColor="@android:color/transparent"
-                    app:tabSelectedTextColor="@color/white"
-                    app:tabTextColor="@color/grayish_blue" />
-
-                <com.zizohanto.android.currencyconverter.converter.presentation.views.CustomPager
-                    android:id="@+id/tab_viewpager"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tab_layout" />
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="96dp"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tab_layout"
+                        style="@style/TabLayoutStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        app:tabIndicatorColor="@android:color/transparent"
+                        app:tabMode="fixed"
+                        app:tabRippleColor="@android:color/transparent"
+                        app:tabSelectedTextColor="@color/white"
+                        app:tabTextColor="@color/grayish_blue" />
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/tab_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:id="@+id/tv_get_rate_alerts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center"
+                        android:text="@string/get_rates_alert"
+                        android:textColor="@color/white"
+                        android:textColorLink="@color/white"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
 
             </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.zizohanto.android.currencyconverter.converter.presentation.views.CustomScrollView>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
