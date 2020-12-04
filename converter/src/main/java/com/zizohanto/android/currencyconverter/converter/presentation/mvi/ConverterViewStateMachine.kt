@@ -6,12 +6,12 @@ import javax.inject.Inject
  * Created by zizoh on 26/November/2020.
  */
 
-class ConverterViewStateMachine  @Inject constructor(
+class ConverterViewStateMachine @Inject constructor(
     intentProcessor: ConverterIntentProcessor,
     reducer: ConverterStateReducer
 ) : ConverterStateMachine(
     intentProcessor,
     reducer,
-    ConverterViewIntent.LoadSymbols,
+    ConverterViewIntent.GetChartData(30, "USD", "NGN"),
     ConverterViewState.Idle
 )

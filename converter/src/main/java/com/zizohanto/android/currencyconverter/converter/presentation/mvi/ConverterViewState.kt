@@ -19,4 +19,7 @@ sealed class ConverterViewState : ViewState {
         val isErrorGettingSymbols: Boolean
     ) : ConverterViewState()
 
+    object GettingChartData : ConverterViewState()
+    data class ChartDataLoaded(val historicalData: List<HistoricalDataModel>) : ConverterViewState()
+
 }

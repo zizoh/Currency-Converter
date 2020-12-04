@@ -2,6 +2,7 @@ package com.zizohanto.android.currencyconverter.converter.presentation.mvi
 
 import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import com.zizohanto.android.currencyconverter.domain.usecase.GetConversion
+import com.zizohanto.android.currencyconverter.domain.usecase.GetConversionForPeriod
 import com.zizohanto.android.currencyconverter.domain.usecase.GetSymbols
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 class ConverterViewIntentProcessor @Inject constructor(
     private val getSymbols: GetSymbols,
-    private val getConversion: GetConversion
+    private val getConversion: GetConversion,
+    private val getChartData: GetConversionForPeriod
 ) : ConverterIntentProcessor {
     override fun intentToResult(viewIntent: ConverterViewIntent): Flow<ConverterViewResult> {
         return when (viewIntent) {
@@ -20,6 +22,11 @@ class ConverterViewIntentProcessor @Inject constructor(
             ConverterViewIntent.LoadSymbols -> loadSymbols()
             is ConverterViewIntent.GetRates -> getConversion(
                 viewIntent.amount,
+                viewIntent.base,
+                viewIntent.target
+            )
+            is ConverterViewIntent.GetChartData -> getChartData(
+                viewIntent.numberOfDays,
                 viewIntent.base,
                 viewIntent.target
             )
@@ -53,6 +60,24 @@ class ConverterViewIntentProcessor @Inject constructor(
                 emit(ConverterViewResult.GettingRates)
             }.catch { error ->
                 error.printStackTrace()
+                emit(ConverterViewResult.Error(error, isErrorGettingSymbols = false))
+            }
+    }
+
+    private fun getChartData(
+        numberOfDays: Int,
+        base: String,
+        target: String
+    ): Flow<ConverterViewResult> {
+        val params = GetConversionForPeriod.Params(numberOfDays, base, target)
+        return getChartData(params)
+            .map<List<HistoricalData>, ConverterViewResult> {
+                ConverterViewResult.ChartDataLoaded(it)
+            }.onStart {
+                emit(ConverterViewResult.GettingChartData)
+            }.catch { error ->
+                error.printStackTrace()
+                // todo remove check for error type
                 emit(ConverterViewResult.Error(error, isErrorGettingSymbols = false))
             }
     }

@@ -49,6 +49,22 @@ class ConverterRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getRatesWithinPeriod(
+        dates: List<String>,
+        base: String,
+        target: String
+    ): Flow<List<HistoricalData>> {
+        return flow {
+            val historicalData: ArrayList<HistoricalData> = ArrayList()
+            for (date in dates) {
+                val dataFromRemote: HistoricalDataEntity =
+                    converterRemote.getHistoricalData(date, base, target)
+                historicalData.add(getHistoricalData(dataFromRemote, 1.0))
+            }
+            emit(historicalData)
+        }
+    }
+
     private fun getHistoricalData(
         historicalDataFromCache: HistoricalDataEntity,
         amount: Double

@@ -17,4 +17,7 @@ sealed class ConverterViewResult : ViewResult {
         val throwable: Throwable,
         val isErrorGettingSymbols: Boolean
     ) : ConverterViewResult()
+
+    object GettingChartData : ConverterViewResult()
+    data class ChartDataLoaded(val historicalData: List<HistoricalData>) : ConverterViewResult()
 }

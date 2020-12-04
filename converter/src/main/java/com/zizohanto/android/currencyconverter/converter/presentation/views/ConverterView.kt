@@ -10,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.FragmentManager
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.zizohanto.android.currencyconverter.converter.R
@@ -17,6 +18,8 @@ import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConve
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewIntent
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewState
+import com.zizohanto.android.currencyconverter.converter.ui.converter.ChartFragment
+import com.zizohanto.android.currencyconverter.converter.ui.converter.ViewPagerAdapter
 import com.zizohanto.android.currencyconverter.core.ext.makeLinks
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,6 +37,8 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     MVIView<ConverterViewIntent, ConverterViewState> {
 
     private var binding: LayoutConverterBinding
+
+    lateinit var fragmentManager: FragmentManager
 
     init {
         isSaveEnabled = true
@@ -146,7 +151,35 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 }
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
+            ConverterViewState.GettingChartData -> {
+
+            }
+            is ConverterViewState.ChartDataLoaded -> {
+                val adapter = getViewPagerAdapter(state)
+                binding.tabViewpager.offscreenPageLimit = 2
+                binding.tabViewpager.adapter = adapter
+                binding.tabLayout.setupWithViewPager(binding.tabViewpager)
+            }
         }
+    }
+
+    private fun getViewPagerAdapter(state: ConverterViewState.ChartDataLoaded): ViewPagerAdapter {
+        val adapter = ViewPagerAdapter(fragmentManager)
+        adapter.addFrag(
+            ChartFragment.newInstance(
+                ChartFragment.ChartFragmentBundle(
+                    30, "USD", state.historicalData
+                )
+            ), "Past ${state.historicalData.size} days"
+        )
+        adapter.addFrag(
+            ChartFragment.newInstance(
+                ChartFragment.ChartFragmentBundle(
+                    30, "USD", state.historicalData
+                )
+            ), "Past ${state.historicalData.size} days"
+        )
+        return adapter
     }
 
     private fun enableConvertButton(

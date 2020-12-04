@@ -17,4 +17,10 @@ interface ConverterRepository {
         base: String,
         target: String
     ): Flow<HistoricalData>
+
+    fun getRatesWithinPeriod(
+        dates: List<String>,
+        base: String,
+        target: String
+    ): Flow<List<HistoricalData>>
 }

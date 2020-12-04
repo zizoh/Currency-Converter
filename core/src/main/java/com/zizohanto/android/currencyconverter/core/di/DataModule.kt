@@ -2,6 +2,7 @@ package com.zizohanto.android.currencyconverter.core.di
 
 import com.zizohanto.android.currencyconverter.data.repository.ConverterRepositoryImpl
 import com.zizohanto.android.currencyconverter.domain.repository.ConverterRepository
+import com.zizohanto.android.currencyconverter.domain.repository.ConverterRepositoryImplFake
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
