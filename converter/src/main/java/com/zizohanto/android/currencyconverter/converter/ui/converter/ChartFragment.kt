@@ -36,7 +36,7 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            val bundle = it.getParcelable<ChartFragmentBundle>(CHART_FRAGMENT_BUNDLE)
+            val bundle = it.getParcelable<ChartFragmentBundleData>(CHART_FRAGMENT_BUNDLE)
             if (bundle != null) {
                 showChart(bundle.numberOfEntries)
                 setData(bundle.historicalData, bundle.baseSymbol)
@@ -135,19 +135,17 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
 
     companion object {
         const val CHART_FRAGMENT_BUNDLE = "CHART_FRAGMENT_BUNDLE"
-        fun newInstance(
-            bundle: ChartFragmentBundle
-        ): ChartFragment {
+        fun newInstance(bundleData: ChartFragmentBundleData): ChartFragment {
             return ChartFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(CHART_FRAGMENT_BUNDLE, bundle)
+                    putParcelable(CHART_FRAGMENT_BUNDLE, bundleData)
                 }
             }
         }
     }
 
     @Parcelize
-    data class ChartFragmentBundle(
+    data class ChartFragmentBundleData(
         val numberOfEntries: Int,
         val baseSymbol: String,
         val historicalData: List<HistoricalDataModel>

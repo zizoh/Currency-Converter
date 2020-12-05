@@ -12,6 +12,6 @@ class ConverterViewStateMachine @Inject constructor(
 ) : ConverterStateMachine(
     intentProcessor,
     reducer,
-    ConverterViewIntent.GetChartData(30, "USD", "NGN"),
+    ConverterViewIntent.LoadSymbols,
     ConverterViewState.Idle
 )

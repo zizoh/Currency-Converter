@@ -120,7 +120,7 @@ object Dependencies {
 
     object Coroutines : Libraries {
         object Version {
-            const val coroutines: String = "1.3.9"
+            const val coroutines: String = "1.4.1"
         }
 
         const val core: String =

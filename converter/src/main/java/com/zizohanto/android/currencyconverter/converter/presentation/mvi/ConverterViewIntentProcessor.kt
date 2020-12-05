@@ -72,7 +72,7 @@ class ConverterViewIntentProcessor @Inject constructor(
         val params = GetConversionForPeriod.Params(numberOfDays, base, target)
         return getChartData(params)
             .map<List<HistoricalData>, ConverterViewResult> {
-                ConverterViewResult.ChartDataLoaded(it)
+                ConverterViewResult.ChartDataLoaded(numberOfDays, it)
             }.onStart {
                 emit(ConverterViewResult.GettingChartData)
             }.catch { error ->

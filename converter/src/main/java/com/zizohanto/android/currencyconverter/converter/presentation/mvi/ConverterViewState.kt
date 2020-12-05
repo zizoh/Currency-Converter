@@ -20,6 +20,9 @@ sealed class ConverterViewState : ViewState {
     ) : ConverterViewState()
 
     object GettingChartData : ConverterViewState()
-    data class ChartDataLoaded(val historicalData: List<HistoricalDataModel>) : ConverterViewState()
+    data class ChartDataLoaded(
+        val numberOfEntries: Int,
+        val historicalData: List<HistoricalDataModel>
+    ) : ConverterViewState()
 
 }

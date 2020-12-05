@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
+import com.zizohanto.android.currencyconverter.core.ext.getImage
 import de.hdodenhof.circleimageview.CircleImageView
 
 
@@ -35,12 +35,7 @@ class SymbolAdapter(
         val layout: View = inflater.inflate(R.layout.currency_button_layout, parent, false)
         val symbolItem = symbolItems[position]
         val flag: CircleImageView = layout.findViewById(R.id.currency_flag)
-        flag.setImageDrawable(
-            ContextCompat.getDrawable(
-                parent.context,
-                symbolItem.flagResId
-            )
-        )
+        flag.setImageDrawable(parent.context.getImage(symbolItem.flagResId))
 
         val symbol: TextView = layout.findViewById(R.id.currency_symbol)
         symbol.text = symbolItem.symbol

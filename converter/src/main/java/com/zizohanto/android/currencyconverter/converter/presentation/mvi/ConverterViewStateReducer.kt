@@ -27,17 +27,7 @@ class ConverterViewStateReducer @Inject constructor(
             }
             is ConverterViewResult.Converted -> {
                 val historicalData = mapper.mapToModel(result.historicalData)
-                when (previous) {
-                    is ConverterViewState.GettingConversion -> {
-                        ConverterViewState.Converted(historicalData)
-                    }
-                    is ConverterViewState.Error -> {
-                        ConverterViewState.Converted(historicalData)
-                    }
-                    else -> {
-                        ConverterViewState.Idle
-                    }
-                }
+                ConverterViewState.Converted(historicalData)
             }
             is ConverterViewResult.Error -> {
                 when (previous) {
@@ -74,18 +64,8 @@ class ConverterViewStateReducer @Inject constructor(
             ConverterViewResult.GettingRates -> ConverterViewState.GettingConversion
             ConverterViewResult.GettingChartData -> ConverterViewState.GettingChartData
             is ConverterViewResult.ChartDataLoaded -> {
-                when (previous) {
-                    ConverterViewState.GettingSymbols -> TODO()
-                    ConverterViewState.GettingConversion -> TODO()
-                    is ConverterViewState.Converted -> TODO()
-                    is ConverterViewState.Error -> TODO()
-                    ConverterViewState.GettingChartData -> {
-                        val historicalData = mapper.mapToModelList(result.historicalData)
-                        ConverterViewState.ChartDataLoaded(historicalData)
-                    }
-                    is ConverterViewState.ChartDataLoaded -> TODO()
-                    else -> ConverterViewState.Idle
-                }
+                val historicalData = mapper.mapToModelList(result.historicalData)
+                ConverterViewState.ChartDataLoaded(result.numberOfEntries, historicalData)
             }
         }
     }

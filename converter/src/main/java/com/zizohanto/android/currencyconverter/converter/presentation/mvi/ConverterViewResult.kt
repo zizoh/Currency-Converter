@@ -19,5 +19,8 @@ sealed class ConverterViewResult : ViewResult {
     ) : ConverterViewResult()
 
     object GettingChartData : ConverterViewResult()
-    data class ChartDataLoaded(val historicalData: List<HistoricalData>) : ConverterViewResult()
+    data class ChartDataLoaded(
+        val numberOfEntries: Int,
+        val historicalData: List<HistoricalData>
+    ) : ConverterViewResult()
 }
