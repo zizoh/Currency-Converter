@@ -7,4 +7,5 @@
     <string name="converting">Converting</string>
     <string name="nothing_to_see_here">Nothing to see here.</string>
     <string name="get_rates_alert">Get rate alerts straight to your email inbox</string>
+    <string name="currency_calculator">Currency Calculator.</string>
 </resources>

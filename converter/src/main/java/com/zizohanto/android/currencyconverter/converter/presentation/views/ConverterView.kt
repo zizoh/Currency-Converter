@@ -2,6 +2,9 @@ package com.zizohanto.android.currencyconverter.converter.presentation.views
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +63,13 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 Toast.makeText(context, "Getting symbols", Toast.LENGTH_SHORT).show()
             }
             is ConverterViewState.SymbolsLoaded -> {
+                val spannable = SpannableString("Currency\nCalculator.")
+                spannable.setSpan(
+                    ForegroundColorSpan(Color.GREEN),
+                    spannable.length - 1, spannable.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                binding.currencyConverter.text = spannable
                 val symbolItems: List<SymbolItem> = getSymbolItems(state.state.symbols)
                 val adapter = SymbolAdapter(context, R.layout.currency_button_layout, symbolItems)
                 binding.spinnerBaseCurrency.adapter = adapter
