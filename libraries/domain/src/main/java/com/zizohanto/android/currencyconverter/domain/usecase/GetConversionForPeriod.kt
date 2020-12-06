@@ -9,6 +9,7 @@ import com.zizohanto.android.currencyconverter.domain.usecase.base.FlowUseCase
 import com.zizohanto.android.currencyconverter.domain.utils.DateUtils
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -26,7 +27,15 @@ class GetConversionForPeriod @Inject constructor(
     override fun execute(params: Params?): Flow<List<HistoricalData>> {
         requireParams(params)
         val dates: List<String> = DateUtils.getDatesWithinPeriod(params.numberOfDays)
-        return repository.getRatesWithinPeriod(dates, params.baseRate, params.targetRate)
+        return flow {
+            emit(
+                repository.getRatesWithinPeriod(
+                    dates,
+                    params.baseRate,
+                    params.targetRate
+                )
+            )
+        }
     }
 
     data class Params(val numberOfDays: Int, val baseRate: String, val targetRate: String)

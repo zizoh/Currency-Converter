@@ -18,9 +18,9 @@ interface ConverterRepository {
         target: String
     ): Flow<HistoricalData>
 
-    fun getRatesWithinPeriod(
+    suspend fun getRatesWithinPeriod(
         dates: List<String>,
         base: String,
         target: String
-    ): Flow<List<HistoricalData>>
+    ): List<HistoricalData>
 }
