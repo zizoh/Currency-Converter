@@ -51,91 +51,34 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="56dp"
                 android:layout_marginEnd="16dp"
-                tools:text="@string/currency_calculator"
                 android:textColor="@color/blue"
                 android:textSize="48sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/menu" />
+                app:layout_constraintTop_toBottomOf="@id/menu"
+                tools:text="@string/currency_calculator" />
 
-            <RelativeLayout
-                android:id="@+id/convert_from"
+            <com.zizohanto.android.currencyconverter.converter.presentation.views.CurrencyView
+                android:id="@+id/base"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="48dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/gray"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/currency_converter">
+                app:layout_constraintTop_toBottomOf="@id/currency_converter" />
 
-                <EditText
-                    android:id="@+id/amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@id/tv_base_currency"
-                    android:background="@android:color/transparent"
-                    android:inputType="numberDecimal"
-                    android:textColor="@color/black"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/tv_base_currency"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_vertical"
-                    android:textSize="24sp"
-                    tools:text="NGN" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/convert_to"
+            <com.zizohanto.android.currencyconverter.converter.presentation.views.CurrencyView
+                android:id="@+id/target"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
-                android:background="@color/gray"
+                app:isEditable="false"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/convert_from">
-
-                <TextView
-                    android:id="@+id/converted"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_toStartOf="@id/tv_target_currency"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/black"
-                    android:textSize="24sp"
-                    tools:text="00000" />
-
-                <TextView
-                    android:id="@+id/tv_target_currency"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_vertical"
-                    android:textSize="24sp"
-                    tools:text="NGN" />
-            </RelativeLayout>
+                app:layout_constraintTop_toBottomOf="@id/base" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_spinner_base_currency"
@@ -145,7 +88,7 @@
                 android:layout_marginTop="48dp"
                 app:cardElevation="0dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/convert_to"
+                app:layout_constraintTop_toBottomOf="@id/target"
                 app:strokeColor="@color/gray_dark"
                 app:strokeWidth="1dp">
 

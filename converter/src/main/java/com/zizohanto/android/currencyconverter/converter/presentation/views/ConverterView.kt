@@ -28,6 +28,7 @@ import com.zizohanto.android.currencyconverter.converter.ui.converter.ViewPagerA
 import com.zizohanto.android.currencyconverter.core.ext.makeLinks
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.currency_layout.view.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.transform
 import reactivecircus.flowbinding.android.view.clicks
@@ -71,7 +72,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 )
                 binding.currencyConverter.text = spannable
                 val symbolItems: List<SymbolItem> = getSymbolItems(state.state.symbols)
-                val adapter = SymbolAdapter(context, R.layout.currency_button_layout, symbolItems)
+                val adapter = SymbolAdapter(context, R.layout.currency_layout, symbolItems)
                 binding.spinnerBaseCurrency.adapter = adapter
                 binding.spinnerTargetCurrency.adapter = adapter
 
@@ -85,11 +86,11 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         ) {
                             val symbolItem: SymbolItem =
                                 parent?.getItemAtPosition(position) as SymbolItem
-                            binding.tvBaseCurrency.text = symbolItem.symbol
+                            binding.base.setSymbol(symbolItem.symbol)
 
-                            val isValidAmount = !binding.amount.text.isNullOrEmpty()
+                            val isValidAmount = binding.base.getAmount().isNotEmpty()
                             val areDifferentCurrencies =
-                                binding.tvTargetCurrency.text.toString() != symbolItem.symbol
+                                binding.target.getSymbol() != symbolItem.symbol
                             enableConvertButton(isValidAmount && areDifferentCurrencies)
                             clearConvertedValue()
                         }
@@ -108,11 +109,11 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         ) {
                             val symbolItem: SymbolItem =
                                 parent?.getItemAtPosition(position) as SymbolItem
-                            binding.tvTargetCurrency.text = symbolItem.symbol
+                            binding.target.setSymbol(symbolItem.symbol)
 
-                            val isValidAmount = !binding.amount.text.isNullOrEmpty()
+                            val isValidAmount = binding.base.getAmount().isNotEmpty()
                             val areDifferentCurrencies =
-                                binding.tvBaseCurrency.text.toString() != symbolItem.symbol
+                                binding.target.getSymbol() != symbolItem.symbol
                             enableConvertButton(isValidAmount && areDifferentCurrencies)
                             clearConvertedValue()
                         }
@@ -130,11 +131,11 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                     clearConvertedValue()
                 }
 
-                binding.amount.doOnTextChanged { text: CharSequence?, _, _, _ ->
+                binding.base.et_amount.doOnTextChanged { text: CharSequence?, _, _, _ ->
                     val enableButton = enableConvertButton(
                         text,
-                        binding.tvBaseCurrency.text.toString(),
-                        binding.tvTargetCurrency.text.toString()
+                        binding.base.getSymbol(),
+                        binding.target.getSymbol()
                     )
                     enableConvertButton(enableButton)
                     clearConvertedValue()
@@ -147,7 +148,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
             is ConverterViewState.Converted -> {
                 enableConvertButton(true)
                 showConversionProgress(false)
-                binding.converted.text = state.historicalData.convertedRate.toString()
+                binding.target.setAmount(state.historicalData.convertedRate.toString())
 
                 val marketRateText = "Mid-market exchange rate at ${state.historicalData.time}"
                 binding.marketRate.text = marketRateText
@@ -205,7 +206,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     private fun getChartFragment(state: ConverterViewState.ChartDataLoaded): Fragment {
         val bundle = ChartFragmentBundleData(
             state.numberOfEntries,
-            binding.tvBaseCurrency.text.toString(),
+            binding.base.getSymbol(),
             state.historicalData
         )
         return ChartFragment.newInstance(bundle)
@@ -237,7 +238,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     }
 
     private fun clearConvertedValue() {
-        binding.converted.text = ""
+        binding.target.setAmount("")
     }
 
     private fun getSymbolItems(symbols: List<String>): List<SymbolItem> {
@@ -262,9 +263,9 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     private val getRateIntent: Flow<ConverterViewIntent>
         get() = binding.btnConvert.clicks()
             .transform {
-                val amount = binding.amount.text.toString().toDouble()
-                val base = binding.tvBaseCurrency.text.toString()
-                val target = binding.tvTargetCurrency.text.toString()
+                val amount = binding.base.getAmount().toDouble()
+                val base = binding.base.getSymbol()
+                val target = binding.target.getSymbol()
                 emit(ConverterViewIntent.GetRates(amount, base, target))
                 emit(ConverterViewIntent.GetChartData(30, base, target))
                 emit(ConverterViewIntent.GetChartData(90, base, target))
