@@ -14,4 +14,10 @@ sealed class ConverterViewIntent : ViewIntent {
         val base: String,
         val target: String
     ) : ConverterViewIntent()
+
+    data class GetChartData(
+        val numberOfDays: Int,
+        val base: String,
+        val target: String
+    ) : ConverterViewIntent()
 }

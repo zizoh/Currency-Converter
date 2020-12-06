@@ -5,6 +5,7 @@ import com.zizohanto.android.currencyconverter.data.contract.remote.ConverterRem
 import com.zizohanto.android.currencyconverter.data.models.HistoricalDataEntity
 import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import com.zizohanto.android.currencyconverter.domain.repository.ConverterRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -46,6 +47,18 @@ class ConverterRepositoryImpl @Inject constructor(
             converterCache.saveHistoricalData(dataFromRemote)
             val historicalData = getHistoricalData(dataFromRemote, amount)
             emit(historicalData)
+        }
+    }
+
+    override suspend fun getRatesWithinPeriod(
+        dates: List<String>,
+        base: String,
+        target: String
+    ): List<HistoricalData> {
+        return  coroutineScope {
+            return@coroutineScope (dates).map { date ->
+                async { converterRemote.getHistoricalData(date, base, target) }
+            }.awaitAll().map { getHistoricalData(it, 1.0) }
         }
     }
 

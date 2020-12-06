@@ -2,6 +2,9 @@ package com.zizohanto.android.currencyconverter.converter.presentation.views
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -10,18 +13,23 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.tabs.TabLayoutMediator
 import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConverterBinding
 import com.zizohanto.android.currencyconverter.converter.presentation.models.SymbolItem
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewIntent
 import com.zizohanto.android.currencyconverter.converter.presentation.mvi.ConverterViewState
+import com.zizohanto.android.currencyconverter.converter.ui.converter.ChartFragment
+import com.zizohanto.android.currencyconverter.converter.ui.converter.ChartFragment.ChartFragmentBundleData
+import com.zizohanto.android.currencyconverter.converter.ui.converter.ViewPagerAdapter
 import com.zizohanto.android.currencyconverter.core.ext.makeLinks
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import reactivecircus.flowbinding.android.view.clicks
 
 /**
@@ -34,6 +42,10 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
     MVIView<ConverterViewIntent, ConverterViewState> {
 
     private var binding: LayoutConverterBinding
+
+    lateinit var fragment: Fragment
+
+    private val viewPagerAdapter by lazy { ViewPagerAdapter(fragment) }
 
     init {
         isSaveEnabled = true
@@ -51,6 +63,13 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 Toast.makeText(context, "Getting symbols", Toast.LENGTH_SHORT).show()
             }
             is ConverterViewState.SymbolsLoaded -> {
+                val spannable = SpannableString("Currency\nCalculator.")
+                spannable.setSpan(
+                    ForegroundColorSpan(Color.GREEN),
+                    spannable.length - 1, spannable.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                binding.currencyConverter.text = spannable
                 val symbolItems: List<SymbolItem> = getSymbolItems(state.state.symbols)
                 val adapter = SymbolAdapter(context, R.layout.currency_button_layout, symbolItems)
                 binding.spinnerBaseCurrency.adapter = adapter
@@ -134,8 +153,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 binding.marketRate.text = marketRateText
                 binding.marketRate.makeLinks(
                     Pair(marketRateText, OnClickListener {
-                        Toast.makeText(context, "${state.historicalData.time}", Toast.LENGTH_SHORT)
-                            .show()
+                        showDummyToast()
                     })
                 )
             }
@@ -146,7 +164,51 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 }
                 Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
+            ConverterViewState.GettingChartData -> {
+                Toast.makeText(context, "Getting chart data", Toast.LENGTH_SHORT).show()
+                viewPagerAdapter.clearFragments()
+            }
+            is ConverterViewState.ChartDataLoaded -> {
+                val chartFragment: Fragment = getChartFragment(state)
+                viewPagerAdapter.addFragment(state.numberOfEntries, chartFragment)
+                binding.tabViewpager.offscreenPageLimit = 2
+                binding.tabViewpager.adapter = viewPagerAdapter
+                TabLayoutMediator(binding.tabLayout, binding.tabViewpager) { tab, position ->
+                    when (position) {
+                        0 -> {
+                            tab.text = "Past 30 days"
+                        }
+                        1 -> {
+                            tab.text = "Past 90 days"
+                        }
+                    }
+                }.attach()
+
+                val getRateAlerts = context.getString(R.string.get_rates_alert)
+                binding.tvGetRateAlerts.makeLinks(
+                    Pair(getRateAlerts, OnClickListener {
+                        showDummyToast()
+                    })
+                )
+            }
         }
+    }
+
+    private fun showDummyToast() {
+        Toast.makeText(
+            context,
+            context.getString(R.string.nothing_to_see_here),
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    private fun getChartFragment(state: ConverterViewState.ChartDataLoaded): Fragment {
+        val bundle = ChartFragmentBundleData(
+            state.numberOfEntries,
+            binding.tvBaseCurrency.text.toString(),
+            state.historicalData
+        )
+        return ChartFragment.newInstance(bundle)
     }
 
     private fun enableConvertButton(
@@ -199,12 +261,13 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
 
     private val getRateIntent: Flow<ConverterViewIntent>
         get() = binding.btnConvert.clicks()
-            .map {
-                ConverterViewIntent.GetRates(
-                    binding.amount.text.toString().toDouble(),
-                    binding.tvBaseCurrency.text.toString(),
-                    binding.tvTargetCurrency.text.toString()
-                )
+            .transform {
+                val amount = binding.amount.text.toString().toDouble()
+                val base = binding.tvBaseCurrency.text.toString()
+                val target = binding.tvTargetCurrency.text.toString()
+                emit(ConverterViewIntent.GetRates(amount, base, target))
+                emit(ConverterViewIntent.GetChartData(30, base, target))
+                emit(ConverterViewIntent.GetChartData(90, base, target))
             }
 
     override val intents: Flow<ConverterViewIntent>

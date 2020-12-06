@@ -10,7 +10,7 @@ import javax.inject.Inject
  */
 
 class ConverterViewStateReducer @Inject constructor(
-private val mapper: HistoricalDataModelMapper
+    private val mapper: HistoricalDataModelMapper
 ) : ConverterStateReducer {
 
     override fun reduce(
@@ -27,17 +27,7 @@ private val mapper: HistoricalDataModelMapper
             }
             is ConverterViewResult.Converted -> {
                 val historicalData = mapper.mapToModel(result.historicalData)
-                when (previous) {
-                    is ConverterViewState.GettingConversion -> {
-                        ConverterViewState.Converted(historicalData)
-                    }
-                    is ConverterViewState.Error -> {
-                        ConverterViewState.Converted(historicalData)
-                    }
-                    else -> {
-                        ConverterViewState.Idle
-                    }
-                }
+                ConverterViewState.Converted(historicalData)
             }
             is ConverterViewResult.Error -> {
                 when (previous) {
@@ -59,6 +49,12 @@ private val mapper: HistoricalDataModelMapper
                             result.isErrorGettingSymbols
                         )
                     }
+                    is ConverterViewState.GettingChartData -> {
+                        ConverterViewState.Error(
+                            result.throwable.errorMessage,
+                            result.isErrorGettingSymbols
+                        )
+                    }
                     else -> {
                         ConverterViewState.Idle
                     }
@@ -66,6 +62,11 @@ private val mapper: HistoricalDataModelMapper
             }
             ConverterViewResult.GettingSymbols -> ConverterViewState.GettingSymbols
             ConverterViewResult.GettingRates -> ConverterViewState.GettingConversion
+            ConverterViewResult.GettingChartData -> ConverterViewState.GettingChartData
+            is ConverterViewResult.ChartDataLoaded -> {
+                val historicalData = mapper.mapToModelList(result.historicalData)
+                ConverterViewState.ChartDataLoaded(result.numberOfEntries, historicalData)
+            }
         }
     }
 }
