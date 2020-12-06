@@ -86,11 +86,11 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         ) {
                             val symbolItem: SymbolItem =
                                 parent?.getItemAtPosition(position) as SymbolItem
-                            binding.base.setSymbol(symbolItem.symbol)
 
                             val isValidAmount = binding.base.getAmount().isNotEmpty()
                             val areDifferentCurrencies =
                                 binding.target.getSymbol() != symbolItem.symbol
+                            binding.base.setSymbol(symbolItem.symbol)
                             enableConvertButton(isValidAmount && areDifferentCurrencies)
                             clearConvertedValue()
                         }
@@ -109,11 +109,11 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         ) {
                             val symbolItem: SymbolItem =
                                 parent?.getItemAtPosition(position) as SymbolItem
-                            binding.target.setSymbol(symbolItem.symbol)
 
                             val isValidAmount = binding.base.getAmount().isNotEmpty()
                             val areDifferentCurrencies =
                                 binding.target.getSymbol() != symbolItem.symbol
+                            binding.target.setSymbol(symbolItem.symbol)
                             enableConvertButton(isValidAmount && areDifferentCurrencies)
                             clearConvertedValue()
                         }

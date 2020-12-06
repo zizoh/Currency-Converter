@@ -99,10 +99,12 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <ImageView
+            <Button
                 android:id="@+id/swap"
+                style="@style/SwapButtonStyle"
                 android:layout_width="18dp"
                 android:layout_height="23dp"
+                android:layout_margin="16dp"
                 android:background="@drawable/ic_swap"
                 app:layout_constraintBottom_toBottomOf="@id/cv_spinner_base_currency"
                 app:layout_constraintEnd_toStartOf="@id/cv_spinner_target_currency"
