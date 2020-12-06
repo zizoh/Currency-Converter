@@ -165,8 +165,6 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 showConversionProgress(true)
             }
             is ConverterViewState.Converted -> {
-                enableConvertButton(true)
-                showConversionProgress(false)
                 binding.target.setAmount(state.historicalData.convertedRate.toString())
 
                 val marketRateText = "Mid-market exchange rate at ${state.historicalData.time}"
@@ -176,6 +174,9 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         showDummyToast()
                     })
                 )
+                binding.tvEmptyState.show(false)
+                binding.tabLayout.show(true)
+                binding.tabViewpager.show(true)
                 binding.llMarketRate.show(true)
             }
             is ConverterViewState.Error -> {
@@ -206,12 +207,21 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                     }
                     is ConverterViewState.Error.ErrorGettingConversion -> {
                         binding.llMarketRate.show(false)
-                        showConversionProgress(false)
-                        enableConvertButton(true)
-                        Toast.makeText(context, "Error converting currency. Try again later.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Error converting currency. Try again later.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                     is ConverterViewState.Error.ErrorGettingChart -> {
-                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                        binding.tvEmptyState.text = context.getString(R.string.error_getting_chart_data)
+                        binding.tabLayout.show(false)
+                        binding.tabViewpager.show(false)
+                        binding.llMarketRate.show(false)
+                        binding.tvEmptyState.show(true)
+
+                        showConversionProgress(false)
+                        enableConvertButton(true)
                     }
                 }
             }
@@ -240,6 +250,9 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         showDummyToast()
                     })
                 )
+
+                showConversionProgress(false)
+                enableConvertButton(true)
             }
         }
     }
