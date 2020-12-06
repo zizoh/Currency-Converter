@@ -176,6 +176,7 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         showDummyToast()
                     })
                 )
+                binding.llMarketRate.show(true)
             }
             is ConverterViewState.Error -> {
                 when (state) {
@@ -204,7 +205,10 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         )
                     }
                     is ConverterViewState.Error.ErrorGettingConversion -> {
-                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                        binding.llMarketRate.show(false)
+                        showConversionProgress(false)
+                        enableConvertButton(true)
+                        Toast.makeText(context, "Error converting currency. Try again later.", Toast.LENGTH_SHORT).show()
                     }
                     is ConverterViewState.Error.ErrorGettingChart -> {
                         Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
@@ -212,7 +216,6 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 }
             }
             ConverterViewState.GettingChartData -> {
-                Toast.makeText(context, "Getting chart data", Toast.LENGTH_SHORT).show()
                 viewPagerAdapter.clearFragments()
             }
             is ConverterViewState.ChartDataLoaded -> {
