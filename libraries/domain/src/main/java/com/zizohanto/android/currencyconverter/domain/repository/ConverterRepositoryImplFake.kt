@@ -30,6 +30,7 @@ class ConverterRepositoryImplFake @Inject constructor() : ConverterRepository {
         target: String
     ): Flow<List<HistoricalData>> {
         return flow {
+            val mutableList: MutableList<HistoricalData> = mutableListOf()
             val historicalData = listOf(
                 HistoricalData(convertedRate = 377.3925723467343, timeStamp = 1606888517),
                 HistoricalData(convertedRate = 380.9997042959095, timeStamp = 1606867199),
@@ -62,7 +63,14 @@ class ConverterRepositoryImplFake @Inject constructor() : ConverterRepository {
                 HistoricalData(convertedRate = 382.9999198823805, timeStamp = 1604534399),
                 HistoricalData(convertedRate = 383.0002968951909, timeStamp = 1604447999)
             )
-            emit(historicalData)
+            if (dates.size == 30) {
+                mutableList.addAll(historicalData)
+            } else {
+                mutableList.addAll(historicalData)
+                mutableList.addAll(historicalData)
+                mutableList.addAll(historicalData)
+            }
+            emit(mutableList)
         }
     }
 
