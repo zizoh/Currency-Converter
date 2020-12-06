@@ -16,6 +16,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.zizohanto.android.currencyconverter.converter.R
 import com.zizohanto.android.currencyconverter.converter.databinding.LayoutConverterBinding
@@ -26,10 +27,16 @@ import com.zizohanto.android.currencyconverter.converter.ui.converter.ChartFragm
 import com.zizohanto.android.currencyconverter.converter.ui.converter.ChartFragment.ChartFragmentBundleData
 import com.zizohanto.android.currencyconverter.converter.ui.converter.ViewPagerAdapter
 import com.zizohanto.android.currencyconverter.core.ext.makeLinks
+import com.zizohanto.android.currencyconverter.core.ext.safeOffer
+import com.zizohanto.android.currencyconverter.core.ext.show
+import com.zizohanto.android.currencyconverter.core.ext.showSnackbar
 import com.zizohanto.android.currencyconverter.presentation.mvi.MVIView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.currency_layout.view.*
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
 import reactivecircus.flowbinding.android.view.clicks
 
@@ -48,6 +55,8 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
 
     private val viewPagerAdapter by lazy { ViewPagerAdapter(fragment) }
 
+    private var retryGetSymbolsListener: OnClickListener? = null
+
     init {
         isSaveEnabled = true
         val inflater: LayoutInflater = context
@@ -61,20 +70,30 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
             ConverterViewState.Idle -> {
             }
             ConverterViewState.GettingSymbols -> {
-                Toast.makeText(context, "Getting symbols", Toast.LENGTH_SHORT).show()
+                showCurrencyCalculator()
+
+                binding.cvSpinnerBaseCurrency.show(false)
+                binding.cvSpinnerTargetCurrency.show(false)
+                binding.swap.show(false)
+                binding.cvSpinnerTargetCurrencyShimmer.show(true)
+                binding.cvSpinnerBaseCurrencyShimmer.show(true)
+                binding.cvSpinnerTargetCurrencyShimmer.showShimmer(true)
+                binding.cvSpinnerBaseCurrencyShimmer.showShimmer(true)
             }
             is ConverterViewState.SymbolsLoaded -> {
-                val spannable = SpannableString("Currency\nCalculator.")
-                spannable.setSpan(
-                    ForegroundColorSpan(Color.GREEN),
-                    spannable.length - 1, spannable.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                binding.currencyConverter.text = spannable
                 val symbolItems: List<SymbolItem> = getSymbolItems(state.state.symbols)
                 val adapter = SymbolAdapter(context, R.layout.currency_layout, symbolItems)
                 binding.spinnerBaseCurrency.adapter = adapter
                 binding.spinnerTargetCurrency.adapter = adapter
+
+                binding.cvSpinnerBaseCurrency.show(true)
+                binding.cvSpinnerTargetCurrency.show(true)
+                binding.swap.show(true)
+
+                binding.cvSpinnerTargetCurrencyShimmer.stopShimmer()
+                binding.cvSpinnerBaseCurrencyShimmer.stopShimmer()
+                binding.cvSpinnerTargetCurrencyShimmer.show(false)
+                binding.cvSpinnerBaseCurrencyShimmer.show(false)
 
                 binding.spinnerBaseCurrency.onItemSelectedListener =
                     object : AdapterView.OnItemSelectedListener {
@@ -159,11 +178,38 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 )
             }
             is ConverterViewState.Error -> {
-                if (!state.isErrorGettingSymbols) {
-                    enableConvertButton(false)
-                    showConversionProgress(false)
+                when (state) {
+                    is ConverterViewState.Error.ErrorGettingSymbols -> {
+                        showCurrencyCalculator()
+                        enableConvertButton(false)
+                        showConversionProgress(false)
+                        val symbolItems: List<SymbolItem> = getSymbolItems(listOf("N/A"))
+                        val adapter = SymbolAdapter(context, R.layout.currency_layout, symbolItems)
+                        binding.spinnerBaseCurrency.adapter = adapter
+                        binding.spinnerTargetCurrency.adapter = adapter
+
+                        binding.cvSpinnerBaseCurrency.show(true)
+                        binding.cvSpinnerTargetCurrency.show(true)
+                        binding.swap.show(true)
+
+                        binding.cvSpinnerTargetCurrencyShimmer.stopShimmer()
+                        binding.cvSpinnerBaseCurrencyShimmer.stopShimmer()
+                        binding.cvSpinnerTargetCurrencyShimmer.show(false)
+                        binding.cvSpinnerBaseCurrencyShimmer.show(false)
+
+                        fragment.showSnackbar(
+                            state.message, Snackbar.LENGTH_INDEFINITE,
+                            "Retry",
+                            retryGetSymbolsListener
+                        )
+                    }
+                    is ConverterViewState.Error.ErrorGettingConversion -> {
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is ConverterViewState.Error.ErrorGettingChart -> {
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
             }
             ConverterViewState.GettingChartData -> {
                 Toast.makeText(context, "Getting chart data", Toast.LENGTH_SHORT).show()
@@ -193,6 +239,16 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 )
             }
         }
+    }
+
+    private fun showCurrencyCalculator() {
+        val spannable = SpannableString("Currency\nCalculator.")
+        spannable.setSpan(
+            ForegroundColorSpan(Color.GREEN),
+            spannable.length - 1, spannable.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        binding.currencyConverter.text = spannable
     }
 
     private fun showDummyToast() {
@@ -271,6 +327,15 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                 emit(ConverterViewIntent.GetChartData(90, base, target))
             }
 
+    private val retryGetSymbolsIntent: Flow<ConverterViewIntent>
+        get() = callbackFlow {
+            val listener = OnClickListener { safeOffer(ConverterViewIntent.LoadSymbols) }
+            retryGetSymbolsListener = listener
+            awaitClose {
+                retryGetSymbolsListener = null
+            }
+        }
+
     override val intents: Flow<ConverterViewIntent>
-        get() = getRateIntent
+        get() = merge(getRateIntent, retryGetSymbolsIntent)
 }

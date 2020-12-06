@@ -13,10 +13,11 @@ sealed class ConverterViewResult : ViewResult {
     data class SymbolsLoaded(val symbols: List<String>) : ConverterViewResult()
     object GettingRates : ConverterViewResult()
     data class Converted(val historicalData: HistoricalData) : ConverterViewResult()
-    data class Error(
-        val throwable: Throwable,
-        val isErrorGettingSymbols: Boolean
-    ) : ConverterViewResult()
+    sealed class Error : ConverterViewResult() {
+        data class ErrorGettingSymbols(val throwable: Throwable) : Error()
+        data class ErrorGettingConversion(val throwable: Throwable) : Error()
+        data class ErrorGettingChart(val throwable: Throwable) : Error()
+    }
 
     object GettingChartData : ConverterViewResult()
     data class ChartDataLoaded(

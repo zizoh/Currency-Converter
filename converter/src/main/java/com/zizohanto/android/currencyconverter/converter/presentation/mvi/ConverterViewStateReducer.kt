@@ -30,33 +30,15 @@ class ConverterViewStateReducer @Inject constructor(
                 ConverterViewState.Converted(historicalData)
             }
             is ConverterViewResult.Error -> {
-                when (previous) {
-                    ConverterViewState.GettingSymbols -> {
-                        ConverterViewState.Error(
-                            result.throwable.errorMessage,
-                            result.isErrorGettingSymbols
-                        )
+                when (result) {
+                    is ConverterViewResult.Error.ErrorGettingSymbols -> {
+                        ConverterViewState.Error.ErrorGettingSymbols(result.throwable.errorMessage)
                     }
-                    is ConverterViewState.SymbolsLoaded -> {
-                        ConverterViewState.Error(
-                            result.throwable.errorMessage,
-                            result.isErrorGettingSymbols
-                        )
+                    is ConverterViewResult.Error.ErrorGettingConversion -> {
+                        ConverterViewState.Error.ErrorGettingConversion(result.throwable.errorMessage)
                     }
-                    is ConverterViewState.GettingConversion -> {
-                        ConverterViewState.Error(
-                            result.throwable.errorMessage,
-                            result.isErrorGettingSymbols
-                        )
-                    }
-                    is ConverterViewState.GettingChartData -> {
-                        ConverterViewState.Error(
-                            result.throwable.errorMessage,
-                            result.isErrorGettingSymbols
-                        )
-                    }
-                    else -> {
-                        ConverterViewState.Idle
+                    is ConverterViewResult.Error.ErrorGettingChart -> {
+                        ConverterViewState.Error.ErrorGettingChart(result.throwable.errorMessage)
                     }
                 }
             }

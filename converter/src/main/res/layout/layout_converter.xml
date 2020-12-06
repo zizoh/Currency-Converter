@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="36dp"
     tools:context=".presentation.views.ConverterView">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingTop="36dp"
+        android:scrollbars="none"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -86,7 +88,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="48dp"
+                android:visibility="invisible"
                 app:cardElevation="0dp"
+                app:layout_constraintEnd_toStartOf="@id/swap"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/target"
                 app:strokeColor="@color/gray_dark"
@@ -99,6 +104,19 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/cv_spinner_base_currency_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray_dark"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toStartOf="@id/swap"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/target" />
+
             <Button
                 android:id="@+id/swap"
                 style="@style/SwapButtonStyle"
@@ -106,9 +124,10 @@
                 android:layout_height="23dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/ic_swap"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@id/cv_spinner_base_currency"
-                app:layout_constraintEnd_toStartOf="@id/cv_spinner_target_currency"
-                app:layout_constraintStart_toEndOf="@id/cv_spinner_base_currency"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/cv_spinner_base_currency" />
 
             <com.google.android.material.card.MaterialCardView
@@ -116,8 +135,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
+                android:visibility="invisible"
                 app:cardElevation="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@id/swap"
                 app:layout_constraintTop_toTopOf="@id/cv_spinner_base_currency"
                 app:strokeColor="@color/gray_dark"
                 app:strokeWidth="1dp">
@@ -128,6 +150,19 @@
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.card.MaterialCardView>
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/cv_spinner_target_currency_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="16dp"
+                android:background="@color/gray_dark"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/swap"
+                app:layout_constraintTop_toBottomOf="@id/target" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_convert"

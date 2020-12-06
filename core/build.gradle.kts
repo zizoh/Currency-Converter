@@ -46,6 +46,7 @@ dependencies {
     implementation(AndroidX.lifeCycleCommon)
     implementation(View.appCompat)
     implementation(View.fragment)
+    implementation(View.materialComponent)
     implementation(DI.hiltAndroid)
     implementation(Network.moshi)
     implementation(Coroutines.core)
