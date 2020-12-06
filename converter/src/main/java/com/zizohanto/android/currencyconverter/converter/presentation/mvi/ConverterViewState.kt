@@ -14,10 +14,11 @@ sealed class ConverterViewState : ViewState {
     data class SymbolsLoaded(val state: ConverterDataModel) : ConverterViewState()
     object GettingConversion : ConverterViewState()
     data class Converted(val historicalData: HistoricalDataModel) : ConverterViewState()
-    data class Error(
-        val message: String,
-        val isErrorGettingSymbols: Boolean
-    ) : ConverterViewState()
+    sealed class Error : ConverterViewState() {
+        data class ErrorGettingSymbols(val message: String) : Error()
+        data class ErrorGettingConversion(val message: String) : Error()
+        data class ErrorGettingChart(val message: String) : Error()
+    }
 
     object GettingChartData : ConverterViewState()
     data class ChartDataLoaded(

@@ -42,7 +42,7 @@ class ConverterViewIntentProcessor @Inject constructor(
             }
             .catch { error ->
                 error.printStackTrace()
-                emit(ConverterViewResult.Error(error, isErrorGettingSymbols = true))
+                emit(ConverterViewResult.Error.ErrorGettingSymbols(error))
             }
     }
 
@@ -60,7 +60,7 @@ class ConverterViewIntentProcessor @Inject constructor(
                 emit(ConverterViewResult.GettingRates)
             }.catch { error ->
                 error.printStackTrace()
-                emit(ConverterViewResult.Error(error, isErrorGettingSymbols = false))
+                emit(ConverterViewResult.Error.ErrorGettingConversion(error))
             }
     }
 
@@ -77,8 +77,7 @@ class ConverterViewIntentProcessor @Inject constructor(
                 emit(ConverterViewResult.GettingChartData)
             }.catch { error ->
                 error.printStackTrace()
-                // todo remove check for error type
-                emit(ConverterViewResult.Error(error, isErrorGettingSymbols = false))
+                emit(ConverterViewResult.Error.ErrorGettingChart(error))
             }
     }
 
