@@ -174,6 +174,9 @@ class ConverterView @JvmOverloads constructor(context: Context, attributeSet: At
                         showDummyToast()
                     })
                 )
+                binding.llMarketRate.setOnClickListener {
+                    showDummyToast()
+                }
                 binding.tvEmptyState.show(false)
                 binding.tabLayout.show(true)
                 binding.tabViewpager.show(true)

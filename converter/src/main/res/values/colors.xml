@@ -2,8 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="amber_primary">#ffa000</color>
-    <color name="amber_light">#ffd149</color>
+    <color name="amber_primary">#00D97B</color>
+    <color name="amber_light">#00D97B</color>
     <color name="amber_dark">#c67100</color>
     <color name="green">#00D97B</color>
     <color name="grayish_blue">#A0C1E3</color>
