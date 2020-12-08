@@ -63,12 +63,14 @@ dependencies {
     implementation(FlowBinding.android)
     implementation(DI.hiltAndroid)
     implementation(DI.hiltViewModel)
-    implementation(Others.jodaTime)
+    implementation(Others.jodaTimeAndroid)
     implementAll(AndroidX.components)
     implementAll(Coroutines.components)
 
     kapt(DI.AnnotationProcessor.hiltAndroid)
     kapt(DI.AnnotationProcessor.hiltCompiler)
+
+    testImplementation(Others.jodaTime)
 
     androidTestImplementation(DI.hiltTesting)
     androidTestImplementation(Test.espresso)

@@ -9,4 +9,6 @@ data class HistoricalDataRemoteModel(
     val base: String,
     val date: String,
     val rates: Any
-)
+) {
+    var id: String = ""
+}

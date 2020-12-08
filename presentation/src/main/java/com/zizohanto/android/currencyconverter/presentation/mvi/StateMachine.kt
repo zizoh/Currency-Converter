@@ -1,6 +1,5 @@
 package com.zizohanto.android.currencyconverter.presentation.mvi
 
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 
 abstract class StateMachine<I : ViewIntent, S : ViewState, out R : ViewResult>(
@@ -10,8 +9,7 @@ abstract class StateMachine<I : ViewIntent, S : ViewState, out R : ViewResult>(
     initialState: S
 ) {
 
-    private val viewStateFlow: ConflatedBroadcastChannel<S> =
-        ConflatedBroadcastChannel(initialState)
+    private val viewStateFlow: MutableStateFlow<S> = MutableStateFlow(initialState)
 
     private val intentsChannel: MutableSharedFlow<I> = MutableSharedFlow<I>(1).apply {
         tryEmit(initialIntent)
@@ -22,15 +20,14 @@ abstract class StateMachine<I : ViewIntent, S : ViewState, out R : ViewResult>(
     }
 
     val viewState: Flow<S>
-        get() = viewStateFlow.asFlow()
+        get() = viewStateFlow
 
     val processor: Flow<S> = intentsChannel
         .flatMapMerge { action ->
             intentProcessor.intentToResult(action)
         }.scan(initialState) { previous, result ->
             reducer.reduce(previous, result)
-        }
-        .onEach { state ->
-            viewStateFlow.offer(state)
+        }.onEach { state ->
+            viewStateFlow.value = state
         }
 }

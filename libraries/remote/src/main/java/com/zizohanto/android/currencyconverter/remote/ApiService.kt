@@ -14,13 +14,17 @@ interface ApiService {
 
     @GET("symbols")
     suspend fun getSymbols(
-        @Query("access_key") apiKey: String = ""
+        @Query("access_key") apiKey: String = API_KEY
     ): SymbolRemoteModel
 
     @GET("/{date}")
     suspend fun getHistoricalData(
         @Path("date") date: String,
-        @Query("access_key") apiKey: String = "",
+        @Query("access_key") apiKey: String = API_KEY,
         @Query("symbols") symbols: String
     ): HistoricalDataRemoteModel
+
+    companion object {
+        const val API_KEY = ""
+    }
 }

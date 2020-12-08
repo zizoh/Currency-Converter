@@ -62,7 +62,7 @@ class ConverterRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun getHistoricalData(
+    fun getHistoricalData(
         historicalDataFromCache: HistoricalDataEntity,
         amount: Double
     ): HistoricalData {
@@ -70,7 +70,7 @@ class ConverterRepositoryImpl @Inject constructor(
         return HistoricalData(convertedRate, historicalDataFromCache.timestamp)
     }
 
-    private fun getConversion(
+    fun getConversion(
         historicalData: HistoricalDataEntity,
         amount: Double
     ): Double {

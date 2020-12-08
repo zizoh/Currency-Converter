@@ -8,7 +8,6 @@ import com.zizohanto.android.currencyconverter.presentation.mvi.ViewResult
  */
 
 sealed class ConverterViewResult : ViewResult {
-    object Idle : ConverterViewResult()
     object GettingSymbols : ConverterViewResult()
     data class SymbolsLoaded(val symbols: List<String>) : ConverterViewResult()
     object GettingRates : ConverterViewResult()

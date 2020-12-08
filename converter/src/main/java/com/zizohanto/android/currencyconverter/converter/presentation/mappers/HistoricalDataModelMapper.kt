@@ -21,7 +21,7 @@ class HistoricalDataModelMapper @Inject constructor() :
         throw IllegalStateException("Calm down, ya not going that way son.")
     }
 
-    private fun getFormattedTime(timeStamp: Long): String {
+    fun getFormattedTime(timeStamp: Long): String {
         val dateTime = DateTime(timeStamp * 1000L)
         val time = dateTime.toString("HH:mm")
         val timeZone: String = getThreeLetterTimeZone(dateTime)

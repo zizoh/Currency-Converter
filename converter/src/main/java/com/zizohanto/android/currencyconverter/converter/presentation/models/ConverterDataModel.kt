@@ -7,7 +7,7 @@ package com.zizohanto.android.currencyconverter.converter.presentation.models
 data class ConverterDataModel(
     val amount: Double = 0.0,
     val convertedRate: Double = 0.0,
-    val symbols: List<String> = emptyList(),
+    val symbols: List<String> = listOf("USD", "NGN"),
     val baseRateSymbol: String = "USD",
     val targetRateSymbol: String = "NGN"
 )

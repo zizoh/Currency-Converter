@@ -18,9 +18,6 @@ class ConverterViewStateReducer @Inject constructor(
         result: ConverterViewResult
     ): ConverterViewState {
         return when (result) {
-            ConverterViewResult.Idle -> {
-                ConverterViewState.Idle
-            }
             is ConverterViewResult.SymbolsLoaded -> {
                 val symbols: List<String> = result.symbols
                 ConverterViewState.SymbolsLoaded(ConverterDataModel().copy(symbols = symbols))

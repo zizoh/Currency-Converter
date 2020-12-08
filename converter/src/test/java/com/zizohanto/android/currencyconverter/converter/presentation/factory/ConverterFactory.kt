@@ -1,49 +1,21 @@
-package com.zizohanto.android.currencyconverter.remote.datafactory
+package com.zizohanto.android.currencyconverter.converter.presentation.factory
 
+import com.zizohanto.android.currencyconverter.converter.presentation.models.ConverterDataModel
 import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 
 /**
- * Created by zizoh on 02/December/2020.
+ * Created by zizoh on 07/December/2020.
  */
 
-object Factory {
-    fun getDatesWithinPeriod(): List<String> {
-        return listOf(
-            "2020-12-02",
-            "2020-12-01",
-            "2020-11-30",
-            "2020-11-29",
-            "2020-11-28",
-            "2020-11-27",
-            "2020-11-26",
-            "2020-11-25",
-            "2020-11-24",
-            "2020-11-23",
-            "2020-11-22",
-            "2020-11-21",
-            "2020-11-20",
-            "2020-11-19",
-            "2020-11-18",
-            "2020-11-17",
-            "2020-11-16",
-            "2020-11-15",
-            "2020-11-14",
-            "2020-11-13",
-            "2020-11-12",
-            "2020-11-11",
-            "2020-11-10",
-            "2020-11-09",
-            "2020-11-08",
-            "2020-11-07",
-            "2020-11-06",
-            "2020-11-05",
-            "2020-11-04",
-            "2020-11-03"
-        )
+object ConverterFactory {
+
+    fun makeHistoricalData(): HistoricalData {
+        return HistoricalData(CONVERTED_RATE, TIME_STAMP)
     }
 
-    fun getHistoricalData(): List<HistoricalData> {
-        return listOf(
+    fun makeHistoricalDataList(): List<HistoricalData> {
+        val mutableList: MutableList<HistoricalData> = mutableListOf()
+        val historicalData = listOf(
             HistoricalData(convertedRate = 377.3925723467343, timeStamp = 1606888517),
             HistoricalData(convertedRate = 380.9997042959095, timeStamp = 1606867199),
             HistoricalData(convertedRate = 380.50055621638825, timeStamp = 1606780799),
@@ -75,5 +47,20 @@ object Factory {
             HistoricalData(convertedRate = 382.9999198823805, timeStamp = 1604534399),
             HistoricalData(convertedRate = 383.0002968951909, timeStamp = 1604447999)
         )
+        mutableList.addAll(historicalData)
+        return mutableList
     }
+
+    fun makeSymbols(): List<String> {
+        return listOf(BASE, TARGET)
+    }
+
+    fun makeConverterDataModel():ConverterDataModel = ConverterDataModel()
+
+    const val BASE = "USD"
+    const val TARGET = "NGN"
+    const val NUMBER_OF_DAYS = 30
+    private const val CONVERTED_RATE = 1759.0
+
+    private const val TIME_STAMP: Long = 1606755566
 }

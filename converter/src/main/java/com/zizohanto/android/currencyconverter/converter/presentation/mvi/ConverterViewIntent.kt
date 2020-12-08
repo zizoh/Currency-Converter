@@ -7,7 +7,6 @@ import com.zizohanto.android.currencyconverter.presentation.mvi.ViewIntent
  */
 
 sealed class ConverterViewIntent : ViewIntent {
-    object Idle : ConverterViewIntent()
     object LoadSymbols : ConverterViewIntent()
     data class GetRates(
         val amount: Double,

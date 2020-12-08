@@ -27,6 +27,9 @@ class ConverterRemoteImpl @Inject constructor(
     ): HistoricalDataEntity {
         val historicalDataEntity: HistoricalDataRemoteModel =
             apiService.getHistoricalData(date, symbols = "$base,$target")
+                .apply {
+                    id = "$base$target"
+                }
         return historicalDataRemoteModelMapper.mapFromModel(historicalDataEntity)
     }
 }

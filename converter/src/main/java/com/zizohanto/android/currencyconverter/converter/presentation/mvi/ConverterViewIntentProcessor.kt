@@ -18,7 +18,6 @@ class ConverterViewIntentProcessor @Inject constructor(
 ) : ConverterIntentProcessor {
     override fun intentToResult(viewIntent: ConverterViewIntent): Flow<ConverterViewResult> {
         return when (viewIntent) {
-            ConverterViewIntent.Idle -> flowOf(ConverterViewResult.Idle)
             ConverterViewIntent.LoadSymbols -> loadSymbols()
             is ConverterViewIntent.GetRates -> getConversion(
                 viewIntent.amount,
