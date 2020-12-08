@@ -3,6 +3,7 @@ package com.zizohanto.android.currencyconverter.data.repository
 import com.zizohanto.android.currencyconverter.data.contract.cache.ConverterCache
 import com.zizohanto.android.currencyconverter.data.contract.remote.ConverterRemote
 import com.zizohanto.android.currencyconverter.data.models.HistoricalDataEntity
+import com.zizohanto.android.currencyconverter.domain.factory.DomainFactory
 import com.zizohanto.android.currencyconverter.domain.models.HistoricalData
 import com.zizohanto.android.currencyconverter.domain.repository.ConverterRepository
 import kotlinx.coroutines.*
@@ -55,7 +56,18 @@ class ConverterRepositoryImpl @Inject constructor(
         base: String,
         target: String
     ): List<HistoricalData> {
-        return  coroutineScope {
+        // make stubNetworkCall false to make network call to get historical data
+        val stubNetworkCall = true
+        return if (stubNetworkCall) DomainFactory.makeHistoricalDataForPeriod(dates)
+        else makeNetworkCall(dates, base, target)
+    }
+
+    private suspend fun makeNetworkCall(
+        dates: List<String>,
+        base: String,
+        target: String
+    ): List<HistoricalData> {
+        return coroutineScope {
             return@coroutineScope (dates).map { date ->
                 async { converterRemote.getHistoricalData(date, base, target) }
             }.awaitAll().map { getHistoricalData(it, 1.0) }

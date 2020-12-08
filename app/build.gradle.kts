@@ -1,14 +1,14 @@
 import Dependencies.AndroidX
 import Dependencies.DI
-import Dependencies.Others
 import Dependencies.Network
+import Dependencies.Others
 import Dependencies.View
 import ProjectLib.cache
+import ProjectLib.converter
 import ProjectLib.core
 import ProjectLib.data
 import ProjectLib.domain
 import ProjectLib.presentation
-import ProjectLib.converter
 import ProjectLib.remote
 
 plugins {

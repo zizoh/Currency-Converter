@@ -25,6 +25,6 @@ interface ApiService {
     ): HistoricalDataRemoteModel
 
     companion object {
-        const val API_KEY = ""
+        const val API_KEY = "Replace this with your api key"
     }
 }
