@@ -14,7 +14,7 @@ class HistoricalDataRemoteModelMapper @Inject constructor() :
 
     override fun mapFromModel(model: HistoricalDataRemoteModel): HistoricalDataEntity {
         val rates = getRates(model.rates.toString())
-        return HistoricalDataEntity("", model.timestamp, model.base, model.date, rates[0], rates[1])
+        return HistoricalDataEntity(model.id, model.timestamp, model.base, model.date, rates[0], rates[1])
     }
 
     private fun getRates(response: String): List<Double> {

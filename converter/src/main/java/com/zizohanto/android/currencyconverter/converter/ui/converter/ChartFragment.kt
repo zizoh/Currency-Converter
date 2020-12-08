@@ -62,6 +62,7 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
 
         val x: XAxis = chart.xAxis
         x.textColor = Color.WHITE
+        x.textSize = 12f
         x.position = XAxis.XAxisPosition.BOTTOM
         x.setDrawLabels(true)
         x.setDrawGridLines(false)

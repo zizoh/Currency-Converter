@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "timestamp": 1604275199,
+  "historical": true,
+  "base": "EUR",
+  "date": "2020-11-01",
+  "rates": {
+    "USD": 1.164151,
+    "NGN": 442.96153
+  }
+}
